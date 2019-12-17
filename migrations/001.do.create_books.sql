@@ -2,5 +2,6 @@ CREATE TABLE books (
     id SERIAL PRIMARY KEY,
     title TEXT NOT NULL,
     information TEXT,
-    date_published DATE
+    instrument TEXT NOT NULL,
+    year_published NUMERIC
 );

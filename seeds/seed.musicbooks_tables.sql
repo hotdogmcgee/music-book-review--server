@@ -4,7 +4,8 @@ TRUNCATE
     books,
     authors,
     users,
-    reviews
+    reviews, 
+    books_authors
     RESTART IDENTITY CASCADE;
 
 INSERT INTO users (user_name, full_name, email, password)
@@ -17,15 +18,16 @@ VALUES
 ('Ray', 'Guitar'),
 ('Suzie', 'Violin'),
 ('Bastian', 'Cool'),
-('Clarinet', 'King');
+('Clarinet', 'King'),
+('Johnny', 'Guitar');
 
-INSERT INTO books (title, information, instrument, year_published, author_id, user_id)
+INSERT INTO books (title, isbn, information, instrument, year_published, user_id)
 VALUES
-('FJH 1', 'for guitar beginners, a great resource!', 'guitar', 2000, 1 , 1),
-('The Art of Violin', 'literally every violin player has used this for 10,000 years', 'violin', 882, 2, 1),
-('guitar book', 'who cares about this description', 'guitar', 1990, 1, 2),
-('Music for Millions', 'a great piano book for beginners', 'piano', 1950, 3, 2),
-('The Clarinet', 'totally a real book', 'clarinet', 2010, 4, 1);
+('FJH 1', 'isbn1', 'for guitar beginners, a great resource!', 'guitar', 2000, 1),
+('The Art of Violin', 'isbn2', 'literally every violin player has used this for 10,000 years', 'violin', 882, 1),
+('guitar book', 'isbn3', 'who cares about this description', 'guitar', 1990, 2),
+('Music for Millions', 'isbn4', 'a great piano book for beginners', 'piano', 1950, 2),
+('The Clarinet', 'isbn5', 'totally a real book', 'clarinet', 2010, 1);
 
 INSERT INTO reviews (book_id, user_id, review_text, rating)
 VALUES
@@ -36,5 +38,14 @@ VALUES
 (3, 2, 'i love the piano so much, thank you Bastian!', 5),
 (4, 2, 'wow the clarinet is for losers!', 2),
 (4, 1, 'ugh reeds are the worst', 2);
+
+INSERT INTO books_authors (book_id, author_id)
+VALUES
+(1, 1),
+(1, 2),
+(2, 2),
+(3, 1),
+(4, 3),
+(5, 4);
 
 COMMIT;

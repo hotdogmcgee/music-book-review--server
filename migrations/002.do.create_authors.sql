@@ -4,7 +4,3 @@ CREATE TABLE authors (
     last_name TEXT NOT NULL
 );
 
-ALTER TABLE books
-    ADD COLUMN
-        author_id INTEGER REFERENCES authors(id)
-        ON DELETE SET NULL;

@@ -4,5 +4,6 @@ CREATE TABLE books (
     isbn TEXT,
     information TEXT,
     instrument TEXT NOT NULL,
-    year_published INTEGER
+    year_published INTEGER,
+    date_created TIMESTAMP DEFAULT now() NOT NULL
 );

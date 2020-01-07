@@ -35,6 +35,12 @@ const BooksService = {
     );
   },
 
+  getById(db, id) {
+    return BooksService.getAllBooks(db)
+    .where('bk.id', id)
+    .first()
+  },
+
   insertBook(knex, newBook) {
     return knex
     .insert(newBook)
@@ -46,6 +52,7 @@ const BooksService = {
   },
 
   serializeBooks(books) {
+
     return books.map(this.serializeBook);
   },
 
@@ -53,6 +60,7 @@ const BooksService = {
     const bookTree = new Treeize();
 
     const bookData = bookTree.grow([book]).getData()[0];
+
 
 
     return {

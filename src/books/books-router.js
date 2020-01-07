@@ -13,6 +13,14 @@ booksRouter.route("/").get((req, res, next) => {
     .catch(next);
 });
 
+booksRouter.route('/:book_id')
+.all(checkBookExists)
+.get((req, res) => {
+  res.json(BooksService.serializeBook(res.book))
+})
+
+//need book reviews route
+
 booksRouter.route("/").post(jsonBodyParser, (req, res, next) => {
   const {
     title,
@@ -50,5 +58,24 @@ booksRouter.route("/").post(jsonBodyParser, (req, res, next) => {
     })
     .catch(next);
 });
+
+async function checkBookExists(req, res, next) {
+  try {
+    const book = await BooksService.getById(
+      req.app.get('db'),
+      req.params.book_id
+    )
+
+    if (!book)
+      return res.status(404).json({
+        error: `Book doesn't exist`
+      })
+
+    res.book = book
+    next()
+  } catch (error) {
+    next(error)
+  }
+}
 
 module.exports = booksRouter;

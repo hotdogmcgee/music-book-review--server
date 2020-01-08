@@ -13,10 +13,25 @@ const BooksService = {
           "bk.isbn",
           "bk.instrument",
           "bk.year_published",
+          "bk.date_created",
           // 'authors.first_name',
           // 'authors.last_name',
-          ...userFields
-        //   ...authorsArr
+          ...userFields,
+          db.raw(
+            `json_strip_nulls(
+              row_to_json(
+                (SELECT tmp FROM (
+                  SELECT
+                    usr.id,
+                    usr.user_name,
+                    usr.email,
+                    usr.full_name,
+                    usr.date_created,
+                    usr.date_modified
+                ) tmp)
+              )
+            ) AS "user"`
+          )
         )
         // .leftJoin(
         //     'authors AS auth',
@@ -51,6 +66,21 @@ const BooksService = {
     })
   },
 
+  //do I need to delete comments from here?
+  deleteBook(knex, id) {
+    return knex
+      .from('books')
+      .where({ id })
+      .delete()
+  },
+
+  updateBook(knex, id, newBookFields) {
+    return knex
+      .from('books')
+      .where({ id })
+      .update(newBookFields)
+  },
+
   serializeBooks(books) {
 
     return books.map(this.serializeBook);
@@ -70,7 +100,9 @@ const BooksService = {
       instrument: xss(bookData.instrument),
       isbn: xss(bookData.isbn),
       year_published: bookData.year_published,
-      user: bookData.user || {},
+      date_created: bookData.date_created,
+      // user: bookData.user || {},
+      user_id: bookData.user.id,
     //   authors: bookData.authors || [],
       name: bookData.books_authors
     };

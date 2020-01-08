@@ -95,6 +95,7 @@ function makeExpectedBook(users, book) {
 
     return {
         id: book.id,
+        user_id: book.user_id,
         title: book.title,
         information: book.information,
         instrument: book.instrument,

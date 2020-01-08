@@ -71,10 +71,10 @@ describe("Books Endpoints", function() {
   });
 
   describe("POST /api/books", () => {
-    beforeEach("insert books", () =>
-      {helpers.seedBooksTables(db, testUsers, testBooks)
-      console.log('SEED SUCCESS!');}
-    );
+    beforeEach("insert books", () => {
+      helpers.seedBooksTables(db, testUsers, testBooks);
+      console.log("SEED SUCCESS!");
+    });
 
     it("creates a book, responding with 201 and the new book", function() {
       this.retries(3);
@@ -125,6 +125,27 @@ describe("Books Endpoints", function() {
       //           expect(actualDate).to.eql(expectedDate);
       //     })
       //     )
+    });
+  });
+
+  describe("DELETE /api/books/:book_id", () => {
+    context("Given books DO exist in db", () => {
+      beforeEach("insert books", () =>
+        helpers.seedBooksTables(db, testUsers, testBooks)
+      );
+
+      it("responds with 204 and removes the book", () => {
+        const idToRemove = 2;
+        const expectedBooks = testBooks.filter(book => book.id !== idToRemove);
+        return supertest(app)
+          .delete(`/api/books/${idToRemove}`)
+          .expect(204)
+          .then(res =>
+            supertest(app)
+              .get("/api/books")
+              .expect(expectedBooks)
+          );
+      });
     });
   });
 });

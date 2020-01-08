@@ -13,11 +13,56 @@ booksRouter.route("/").get((req, res, next) => {
     .catch(next);
 });
 
-booksRouter.route('/:book_id')
-.all(checkBookExists)
-.get((req, res) => {
-  res.json(BooksService.serializeBook(res.book))
-})
+booksRouter
+  .route("/:book_id")
+  .all(checkBookExists)
+  .get((req, res) => {
+    res.json(BooksService.serializeBook(res.book));
+  })
+  .delete((req, res, next) => {
+    BooksService.deleteBook(req.app.get("db"), req.params.book_id)
+      .then(() => {
+        res.status(204).end();
+      })
+      .catch(next);
+  })
+
+  //use logger for changes
+  .patch(jsonBodyParser, (req, res, next) => {
+    const {
+      title,
+      information,
+      instrument,
+      isbn,
+      year_published
+      // user_id
+      // author
+    } = req.body;
+    const bookToUpdate = {
+      title,
+      information,
+      instrument,
+      isbn,
+      year_published
+      // user_id
+      // author
+    };
+
+    const numberOfValues = Object.values(bookToUpdate).filter(Boolean).length;
+    if (numberOfValues === 0) {
+      return res.status(400).json({
+        error: {
+          message: `Request body must contain either 'title', 'style' or 'content'`
+        }
+      });
+    }
+
+    BooksService.updateBook(req.app.get("db"), req.params.book_id, bookToUpdate)
+      .then(numRowsAffected => {
+        res.status(204).end();
+      })
+      .catch(next);
+  });
 
 //need book reviews route
 
@@ -28,7 +73,7 @@ booksRouter.route("/").post(jsonBodyParser, (req, res, next) => {
     instrument,
     isbn,
     year_published,
-    user_id,
+    user_id
     // author
   } = req.body;
   const newBook = {
@@ -37,7 +82,7 @@ booksRouter.route("/").post(jsonBodyParser, (req, res, next) => {
     instrument,
     isbn,
     year_published,
-    user_id,
+    user_id
     // author
   };
 
@@ -62,19 +107,19 @@ booksRouter.route("/").post(jsonBodyParser, (req, res, next) => {
 async function checkBookExists(req, res, next) {
   try {
     const book = await BooksService.getById(
-      req.app.get('db'),
+      req.app.get("db"),
       req.params.book_id
-    )
+    );
 
     if (!book)
       return res.status(404).json({
         error: `Book doesn't exist`
-      })
+      });
 
-    res.book = book
-    next()
+    res.book = book;
+    next();
   } catch (error) {
-    next(error)
+    next(error);
   }
 }
 

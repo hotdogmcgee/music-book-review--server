@@ -7,6 +7,7 @@ const  { NODE_ENV } = require('./config.js')
 const booksRouter = require('./books/books-router')
 const usersRouter = require('./users/users-router')
 const authRouter = require('./auth/auth-router')
+const reviewsRouter = require('./reviews/reviews-router')
 const logger = require('./logger')
 const app = express()
 
@@ -21,6 +22,7 @@ app.use(helmet())
 app.use('/api/books', booksRouter)
 app.use('/api/users', usersRouter)
 app.use('/api/auth', authRouter)
+app.use('/api/reviews', reviewsRouter)
 
 app.get('/', (req, res) => {
     res.send('Hello, world!')

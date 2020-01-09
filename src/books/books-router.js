@@ -1,7 +1,7 @@
 const path = require("path");
 const express = require("express");
 const BooksService = require("./books-service");
-const logger = require('../logger')
+const logger = require("../logger");
 
 const booksRouter = express.Router();
 const jsonBodyParser = express.json();
@@ -66,6 +66,16 @@ booksRouter
   });
 
 //need book reviews route
+booksRouter
+  .route("/:book_id/reviews")
+  .all(checkBookExists)
+  .get((req, res, next) => {
+    BooksService.getReviewsForBook(req.app.get("db"), req.params.book_id)
+      .then(reviews => {
+        res.json(reviews.map(BooksService.serializeBookReview));
+      })
+      .catch(next);
+  });
 
 booksRouter.route("/").post(jsonBodyParser, (req, res, next) => {
   const {
@@ -89,7 +99,7 @@ booksRouter.route("/").post(jsonBodyParser, (req, res, next) => {
 
   for (const [key, value] of Object.entries(newBook)) {
     if (value == null) {
-      logger.error(`${key} is required.`)
+      logger.error(`${key} is required.`);
       return res.status(400).json({
         error: { message: `Missing ${key} in request body` }
       });
@@ -104,7 +114,7 @@ booksRouter.route("/").post(jsonBodyParser, (req, res, next) => {
         .json(BooksService.serializeBook(book));
     })
     .catch(next);
-    logger.info(`Book with title ${title} created by user_id ${user_id}.`)
+  logger.info(`Book with title ${title} created by user_id ${user_id}.`);
 });
 
 async function checkBookExists(req, res, next) {
@@ -116,7 +126,7 @@ async function checkBookExists(req, res, next) {
 
     if (!book)
       return res.status(404).json({
-        error: {message: `Book does not exist`}
+        error: { message: `Book does not exist` }
       });
 
     res.book = book;

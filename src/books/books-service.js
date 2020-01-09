@@ -67,6 +67,22 @@ const BooksService = {
     })
   },
 
+  //add full user info
+  getReviewsForBook(db, book_id) {
+    return db
+    .from('reviews AS rv')
+    .select(
+      'rv.id',
+      'rv.book_id',
+      'rv.user_id',
+      'rv.review_text',
+      'rv.rating',
+      'rv.date_created'
+    )
+    .where('rv.book_id', book_id)
+    .groupBy('rv.id', 'rv.user_id')
+  },
+
   //do I need to delete comments from here?
   deleteBook(knex, id) {
     return knex
@@ -109,8 +125,22 @@ const BooksService = {
     //   authors: bookData.authors || [],
       name: bookData.books_authors
     };
+  },
+
+  //add in full user fields
+  serializeBookReview(rv) {
+    return {
+      id: rv. id,
+      user_id: rv.user_id,
+      book_id: rv.book_id,
+      rating: rv.rating,
+      review_text: rv.review_text,
+      date_created: rv.date_created
+    }
   }
 };
+
+
 
 const userFields = [
   "usr.id AS user:id",

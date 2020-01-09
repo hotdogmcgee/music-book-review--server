@@ -7,7 +7,7 @@ const  { NODE_ENV } = require('./config.js')
 const booksRouter = require('./books/books-router')
 const usersRouter = require('./users/users-router')
 const authRouter = require('./auth/auth-router')
-
+const logger = require('./logger')
 const app = express()
 
 const morganOption = (NODE_ENV === 'production')

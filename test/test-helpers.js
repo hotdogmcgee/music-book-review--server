@@ -11,7 +11,7 @@ function makeUsersArray() {
       email: "koob@books.com",
       password: "passworasdsadd",
       date_modified: null,
-      date_created: "2029-01-22T16:28:32.615Z"
+      date_created: "2029-01-22T16:28:32.615"
       
     },
     {
@@ -20,8 +20,8 @@ function makeUsersArray() {
       full_name: "Test user 2",
       email: "notwoody@notwood.com",
       password: "password",
-      date_created: "2029-01-22T16:28:32.615Z",
-      // date_modified: null
+      date_created: "2029-01-22T16:28:32.615",
+      date_modified: null
     },
     {
       id: 3,
@@ -29,8 +29,8 @@ function makeUsersArray() {
       full_name: "Test user 3",
       email: "maybe@maybe.com",
       password: "password",
-      date_created: "2029-01-22T16:28:32.615Z",
-      // date_modified: null
+      date_created: "2029-01-22T16:28:32.615",
+      date_modified: null
     },
     {
       id: 4,
@@ -38,8 +38,8 @@ function makeUsersArray() {
       full_name: "Test user 4",
       email: "steve@evets.com",
       password: "password",
-      date_created: "2029-01-22T16:28:32.615Z",
-      // date_modified: null
+      date_created: "2029-01-22T16:28:32.615",
+      date_modified: null
     }
   ];
 }
@@ -101,13 +101,14 @@ function makeExpectedBook(users, book) {
         instrument: book.instrument,
         isbn: book.isbn,
         year_published: book.year_published,
+        date_created: book.date_created,
         user: {
             id: user.id,
             user_name: user.user_name,
             email: user.email,
             full_name: user.full_name,
             date_created: user.date_created,
-            date_modified: user.date_modified || null
+            // date_modified: user.date_modified || null
           },
     }
 }

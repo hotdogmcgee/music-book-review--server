@@ -1,6 +1,7 @@
 const xss = require("xss");
 const Treeize = require("treeize");
 
+
 const BooksService = {
   getAllBooks(db) {
     return (
@@ -91,6 +92,8 @@ const BooksService = {
 
     const bookData = bookTree.grow([book]).getData()[0];
 
+    console.log(bookData);
+
 
 
     return {
@@ -101,8 +104,8 @@ const BooksService = {
       isbn: xss(bookData.isbn),
       year_published: bookData.year_published,
       date_created: bookData.date_created,
-      // user: bookData.user || {},
-      user_id: bookData.user.id,
+      user: bookData.user || {},
+      // user_id: bookData.user.id,
     //   authors: bookData.authors || [],
       name: bookData.books_authors
     };
@@ -114,8 +117,8 @@ const userFields = [
   "usr.user_name AS user:user_name",
   "usr.full_name AS user:full_name",
   "usr.email AS user:email",
-  "usr.date_created AS user:date_created",
-  "usr.date_modified AS user:date_modified"
+  // "usr.date_created AS user:date_created",
+  // "usr.date_modified AS user:date_modified"
 ];
 
 // function makeAuthorsArr(authors) {

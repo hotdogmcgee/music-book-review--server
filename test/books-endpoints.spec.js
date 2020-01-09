@@ -23,7 +23,7 @@ describe("Books Endpoints", function() {
 
   afterEach("cleanup", () => helpers.cleanTables(db));
 
-  describe.skip("GET /api/books", () => {
+  describe("GET /api/books", () => {
     context("Given no books in db", () => {
       it("responds with 200 and an empty list", () => {
         return supertest(app)
@@ -38,7 +38,7 @@ describe("Books Endpoints", function() {
       );
 
       //error with user.date_modified and bk.year_published
-      it.skip("responds with 200 and all the books", () => {
+      it("responds with 200 and all the books", () => {
         const expectedBooks = testBooks.map(book =>
           helpers.makeExpectedBook(testUsers, book)
         );
@@ -70,17 +70,16 @@ describe("Books Endpoints", function() {
     });
   });
 
-  describe("POST /api/books", () => {
+  describe.skip("POST /api/books", () => {
     beforeEach("insert books", () => {
       helpers.seedBooksTables(db, testUsers, testBooks);
-      console.log("SEED SUCCESS!");
     });
 
     it("creates a book, responding with 201 and the new book", function() {
       this.retries(3);
 
       const testUser = testUsers[0];
-      console.log(testUser);
+      console.log(testUsers);
       const newBook = {
         information: "look at this info!",
         title: "post test book",
@@ -147,5 +146,88 @@ describe("Books Endpoints", function() {
           );
       });
     });
+
+    context("Given books DO NOT exist in db", () => {
+      it("responds with 404", () => {
+        const bookId = 12321321;
+        return supertest(app)
+          .delete(`/api/books/${bookId}`)
+          .expect(404, { error: { message: "Book does not exist" } });
+      });
+    });
+  });
+
+  describe(`PATCH /api/books/:book_id`, () => {
+    context("given books DO exist in db", () => {
+      beforeEach("insert books", () =>
+        helpers.seedBooksTables(db, testUsers, testBooks)
+      );
+
+      it("responds with 204 and updates the book", () => {
+        const idToUpdate = 2;
+        const updateBook = {
+          title: "updated title",
+          information: "updated info",
+          isbn: "new isbn"
+        };
+        const expectedBook = {
+          ...testBooks[idToUpdate - 1],
+          ...updateBook
+        };
+        return supertest(app)
+          .patch(`/api/books/${idToUpdate}`)
+          .send(updateBook)
+          .expect(204)
+          .then(res =>
+            supertest(app)
+              .get(`/api/books/${idToUpdate}`)
+              .expect(expectedBook)
+          );
+      });
+
+      it('repsonds with 400 when no required fields supplied', () => {
+        const idToUpdate = 2
+        return supertest(app)
+        .patch(`/api/books/${idToUpdate}`)
+        .send({irrelevanField: 'should not work'})
+        .expect(400, {
+          error: {
+            message: `Request body must contain either 'title', 'information', 'isbn', 'year published', or 'instrument'`
+          }
+        })
+      })
+
+      it('responds with 204 when updating only a subset of fields', () => {
+        const idToUpdate = 2
+        const updateBook = {
+          title: 'brand new title'
+        }
+
+        const expectedBook = {
+          ...testBooks[idToUpdate - 1],
+          ...updateBook
+        }
+
+        return supertest(app)
+          .patch(`/api/books/${idToUpdate}`)
+          .send({...updateBook, fieldToIgnore: 'should not be in response'})
+          .expect(204)
+          .then(res =>
+            supertest(app)
+              .get(`/api/books/${idToUpdate}`)
+              .expect(expectedBook)
+          );
+        
+      })
+    });
+
+    context('given books DO NOT exist in db', () => {
+      it('responds with 404', () => {
+        const bookId = 123213123
+        return supertest(app)
+        .patch(`/api/books/${bookId}`)
+        .expect(404, {error: { message: 'Book does not exist'}})
+      })
+    })
   });
 });

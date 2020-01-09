@@ -1,6 +1,7 @@
 const path = require("path");
 const express = require("express");
 const BooksService = require("./books-service");
+const logger = require('../logger')
 
 const booksRouter = express.Router();
 const jsonBodyParser = express.json();
@@ -52,7 +53,7 @@ booksRouter
     if (numberOfValues === 0) {
       return res.status(400).json({
         error: {
-          message: `Request body must contain either 'title', 'style' or 'content'`
+          message: `Request body must contain either 'title', 'information', 'isbn', 'year published', or 'instrument'`
         }
       });
     }
@@ -88,6 +89,7 @@ booksRouter.route("/").post(jsonBodyParser, (req, res, next) => {
 
   for (const [key, value] of Object.entries(newBook)) {
     if (value == null) {
+      logger.error(`${key} is required.`)
       return res.status(400).json({
         error: { message: `Missing ${key} in request body` }
       });
@@ -102,6 +104,7 @@ booksRouter.route("/").post(jsonBodyParser, (req, res, next) => {
         .json(BooksService.serializeBook(book));
     })
     .catch(next);
+    logger.info(`Book with title ${title} created by user_id ${user_id}.`)
 });
 
 async function checkBookExists(req, res, next) {
@@ -113,7 +116,7 @@ async function checkBookExists(req, res, next) {
 
     if (!book)
       return res.status(404).json({
-        error: `Book doesn't exist`
+        error: {message: `Book does not exist`}
       });
 
     res.book = book;

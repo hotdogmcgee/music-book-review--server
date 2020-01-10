@@ -77,6 +77,7 @@ booksRouter
       .catch(next);
   });
 
+  //change user_id to req.user_id
 booksRouter.route("/").post(jsonBodyParser, (req, res, next) => {
   const {
     title,
@@ -93,6 +94,7 @@ booksRouter.route("/").post(jsonBodyParser, (req, res, next) => {
     instrument,
     isbn,
     year_published,
+
     user_id
     // author
   };

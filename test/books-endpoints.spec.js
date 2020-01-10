@@ -4,7 +4,7 @@ const helpers = require("./test-helpers");
 
 //why is my date_modified not being passed correctly when creating books?
 
-describe("Books Endpoints", function() {
+describe.only("Books Endpoints", function() {
   let db;
 
   const { testUsers, testBooks } = helpers.makeBooksFixtures();
@@ -79,7 +79,6 @@ describe("Books Endpoints", function() {
       this.retries(3);
 
       const testUser = testUsers[0];
-      console.log(testUsers);
       const newBook = {
         information: "look at this info!",
         title: "post test book",
@@ -97,7 +96,7 @@ describe("Books Endpoints", function() {
         .expect(201)
         .expect(res => {
           expect(res.body).to.have.property("id");
-          expect(res.body.user.id).to.eql(testUser.id);
+          expect(res.body.user_id).to.eql(testUser.id);
           expect(res.body.information).to.eql(newBook.information);
           expect(res.body.title).to.eql(newBook.title);
           expect(res.body.instrument).to.eql(newBook.instrument);
@@ -135,14 +134,17 @@ describe("Books Endpoints", function() {
 
       it("responds with 204 and removes the book", () => {
         const idToRemove = 2;
-        const expectedBooks = testBooks.filter(book => book.id !== idToRemove);
+        const expectedBooks = testBooks.map(book =>
+          helpers.makeExpectedBook(testUsers, book)
+        );
+        const oneLess = expectedBooks.filter(book => book.id !== idToRemove);
         return supertest(app)
           .delete(`/api/books/${idToRemove}`)
           .expect(204)
           .then(res =>
             supertest(app)
               .get("/api/books")
-              .expect(expectedBooks)
+              .expect(oneLess)
           );
       });
     });

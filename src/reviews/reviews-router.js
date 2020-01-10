@@ -17,7 +17,6 @@ reviewsRouter.route("/").get((req, res, next) => {
 
   ReviewsService.getAllReviews(req.app.get("db"))
     .then(reviews => {
-      console.log("get all reviews");
       let results = reviews;
       if (user_id) {
         results = reviews.filter(rv => rv.user_id == user_id);

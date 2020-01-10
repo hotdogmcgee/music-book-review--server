@@ -22,6 +22,7 @@ const ReviewsService = {
   },
 
   insertReview(db, newReview) {
+
       return db
         .insert(newReview)
         .into('reviews')
@@ -48,7 +49,7 @@ const ReviewsService = {
         user_id: rv.user_id,
         book_id: rv.book_id,
         rating: rv.rating,
-        review_text: rv.review_text,
+        review_text: xss(rv.review_text),
         date_created: rv.date_created
       }
   }

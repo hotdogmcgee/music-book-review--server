@@ -1,7 +1,6 @@
 const xss = require("xss");
 const Treeize = require("treeize");
 
-
 const BooksService = {
   getAllBooks(db) {
     return (
@@ -18,21 +17,21 @@ const BooksService = {
           // 'authors.first_name',
           // 'authors.last_name',
           ...userFields,
-          db.raw(
-            `json_strip_nulls(
-              row_to_json(
-                (SELECT tmp FROM (
-                  SELECT
-                    usr.id,
-                    usr.user_name,
-                    usr.email,
-                    usr.full_name,
-                    usr.date_created,
-                    usr.date_modified
-                ) tmp)
-              )
-            ) AS "user"`
-          )
+          // db.raw(
+          //   `json_strip_nulls(
+          //     row_to_json(
+          //       (SELECT tmp FROM (
+          //         SELECT
+          //           usr.id,
+          //           usr.user_name,
+          //           usr.email,
+          //           usr.full_name,
+          //           usr.date_created,
+          //           usr.date_modified
+          //       ) tmp)
+          //     )
+          //   ) AS "user"`
+          // )
         )
         // .leftJoin(
         //     'authors AS auth',
@@ -53,53 +52,54 @@ const BooksService = {
 
   getById(db, id) {
     return BooksService.getAllBooks(db)
-    .where('bk.id', id)
-    .first()
+      .where("bk.id", id)
+      .first();
   },
 
-  insertBook(knex, newBook) {
-    return knex
-    .insert(newBook)
-    .into('books')
-    .returning('*')
-    .then(rows => {
-      return rows[0]
-    })
+  insertBook(db, newBook) {
+    return db
+      .insert(newBook)
+      .into("books")
+      .returning("*")
+      .then(([bk]) => bk)
+      .then(bk => BooksService.getById(db, bk.id));
+    // .then(rows => {
+    //   return rows[0]
+    // })
   },
 
   //add full user info
   getReviewsForBook(db, book_id) {
     return db
-    .from('reviews AS rv')
-    .select(
-      'rv.id',
-      'rv.book_id',
-      'rv.user_id',
-      'rv.review_text',
-      'rv.rating',
-      'rv.date_created'
-    )
-    .where('rv.book_id', book_id)
-    .groupBy('rv.id', 'rv.user_id')
+      .from("reviews AS rv")
+      .select(
+        "rv.id",
+        "rv.book_id",
+        "rv.user_id",
+        "rv.review_text",
+        "rv.rating",
+        "rv.date_created"
+      )
+      .where("rv.book_id", book_id)
+      .groupBy("rv.id", "rv.user_id");
   },
 
   //do I need to delete comments from here?
   deleteBook(knex, id) {
     return knex
-      .from('books')
+      .from("books")
       .where({ id })
-      .delete()
+      .delete();
   },
 
   updateBook(knex, id, newBookFields) {
     return knex
-      .from('books')
+      .from("books")
       .where({ id })
-      .update(newBookFields)
+      .update(newBookFields);
   },
 
   serializeBooks(books) {
-
     return books.map(this.serializeBook);
   },
 
@@ -107,10 +107,6 @@ const BooksService = {
     const bookTree = new Treeize();
 
     const bookData = bookTree.grow([book]).getData()[0];
-
-    console.log(bookData);
-
-
 
     return {
       id: bookData.id,
@@ -121,8 +117,8 @@ const BooksService = {
       year_published: bookData.year_published,
       date_created: bookData.date_created,
       user: bookData.user || {},
-      // user_id: bookData.user.id,
-    //   authors: bookData.authors || [],
+      user_id: bookData.user.id,
+      //   authors: bookData.authors || [],
       name: bookData.books_authors
     };
   },
@@ -130,25 +126,23 @@ const BooksService = {
   //add in full user fields
   serializeBookReview(rv) {
     return {
-      id: rv. id,
+      id: rv.id,
       user_id: rv.user_id,
       book_id: rv.book_id,
       rating: rv.rating,
       review_text: rv.review_text,
       date_created: rv.date_created
-    }
+    };
   }
 };
-
-
 
 const userFields = [
   "usr.id AS user:id",
   "usr.user_name AS user:user_name",
   "usr.full_name AS user:full_name",
   "usr.email AS user:email",
-  // "usr.date_created AS user:date_created",
-  // "usr.date_modified AS user:date_modified"
+  "usr.date_created AS user:date_created",
+  "usr.date_modified AS user:date_modified"
 ];
 
 // function makeAuthorsArr(authors) {

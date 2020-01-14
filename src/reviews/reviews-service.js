@@ -1,4 +1,5 @@
 const xss = require("xss");
+const Treeize = require('treeize')
 
 const ReviewsService = {
   getAllReviews(db) {
@@ -22,6 +23,7 @@ const ReviewsService = {
   },
 
   insertReview(db, newReview) {
+    console.log('newReview: ', newReview);
 
       return db
         .insert(newReview)
@@ -43,14 +45,19 @@ const ReviewsService = {
       return rvs.map(this.serializeReview)
   },
 
+  //get rid of treeize if not using user data
   serializeReview(rv) {
+
+    const reviewTree = new Treeize()
+
+    const reviewData = reviewTree.grow([rv]).getData()[0]
       return {
-        id: rv.id,
-        user_id: rv.user_id,
-        book_id: rv.book_id,
-        rating: rv.rating,
-        review_text: xss(rv.review_text),
-        date_created: rv.date_created
+        id: reviewData.id,
+        user_id: reviewData.user_id,
+        book_id: reviewData.book_id,
+        rating: reviewData.rating,
+        review_text: xss(reviewData.review_text),
+        date_created: reviewData.date_created
       }
   }
 };

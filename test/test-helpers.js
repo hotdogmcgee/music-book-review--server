@@ -141,6 +141,7 @@ function makeReviewsArray(users, books) {
 function makeExpectedBook(users, book) {
   const user = users.find(user => user.id === book.user_id);
 
+
   return {
     id: book.id,
     // user_id: book.user_id,
@@ -175,8 +176,8 @@ function makeExpectedBook(users, book) {
 //   }
 // }
 
-function makeExpectedReview(users, review) {
-  const user = users.find(user => user.id === review.user_id);
+function makeExpectedReview(review) {
+  // const user = users.find(user => user.id === review.user_id);
 
   return {
     id: review.id,
@@ -217,15 +218,16 @@ function makeMaliciousReview(user, book) {
     book_id: book.id,
     user_id: user.id,
     rating: 4,
-    review_text: 'Naughty naughty very naughty <script>alert("xss");</script>',
+    review_text: 'Naughty naughty REVIEW very naughty <script>alert("xss");</script>',
     date_created: new Date().toISOString()
   };
 
   const expectedReview = {
     ...makeExpectedReview([user], maliciousReview),
     review_text:
-      'Naughty naughty very naughty &lt;script&gt;alert("xss");&lt;/script&gt;'
+      'Naughty naughty REVIEW very naughty &lt;script&gt;alert("xss");&lt;/script&gt;'
   };
+
 
   return {
     maliciousReview,
@@ -245,7 +247,7 @@ function cleanTables(db) {
   return db.raw(
     `TRUNCATE
           books,
-          users, 
+          users,
           reviews
           RESTART IDENTITY CASCADE`
   );
@@ -269,7 +271,7 @@ function seedBooksTables(db, users, books, reviews) {
     .into("users")
     .insert(users)
     .then(() => db.into("books").insert(books))
-    .then(() => makeReviewsArray.length && db.into("reviews").insert(reviews));
+    .then(() => makeReviewsArray.length && db.into("reviews").insert(reviews))
 }
 
 function seedMaliciousBook(db, user, book) {
@@ -284,7 +286,7 @@ function seedMaliciousReview(db, user, book, review) {
     .into("users")
     .insert([user])
     .then(() => db.into("books").insert([book]))
-    .then(() => db.into("reviews").insert(review));
+    .then(() => db.into("reviews").insert([review]));
 }
 
 function makeAuthHeader(user, secret = process.env.JWT_SECRET) {

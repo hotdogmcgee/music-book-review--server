@@ -5,25 +5,25 @@ const UsersService = require("./users-service");
 const usersRouter = express.Router();
 const jsonBodyParser = express.json();
 
-usersRouter.route("/").get((req, res, next) => {
-  const { sort } = req.query;
+// usersRouter.route("/").get((req, res, next) => {
+//   const { sort } = req.query;
 
-  if (sort) {
-    if (!["id"].includes(sort)) {
-      return res.status(400).send("Sort must have id");
-    }
-  }
-  UsersService.getAllUsers(req.app.get("db"))
-    .then(users => {
-      if (sort) {
-        users.sort((a, b) => {
-          return a[sort] > b[sort] ? 1 : a[sort] < b[sort] ? -1 : 0;
-        });
-      }
-      res.json(UsersService.serializeUsers(users));
-    })
-    .catch(next);
-});
+//   if (sort) {
+//     if (!["id"].includes(sort)) {
+//       return res.status(400).send("Sort must have id");
+//     }
+//   }
+//   UsersService.getAllUsers(req.app.get("db"))
+//     .then(users => {
+//       if (sort) {
+//         users.sort((a, b) => {
+//           return a[sort] > b[sort] ? 1 : a[sort] < b[sort] ? -1 : 0;
+//         });
+//       }
+//       res.json(UsersService.serializeUsers(users));
+//     })
+//     .catch(next);
+// });
 
 usersRouter.post("/", jsonBodyParser, (req, res, next) => {
   const { password, user_name, full_name, email } = req.body;
@@ -62,12 +62,12 @@ UsersService.hasUserWithEmail(req.app.get("db"), email)
         // console.log(newUser.hashedPassword);
 
         
-
+//getting HTTP HEADERS SENT error, unsure of why
         return UsersService.insertUser(req.app.get("db"), newUser).then(
           user => {
             res
               .status(201)
-              .location(path.posix.join(req.originalUrl, `/${user.id}`))
+              .location(path.posix.join(req.originalUrl + `/${user.id}`))
               .json(UsersService.serializeUser(user));
 
           }

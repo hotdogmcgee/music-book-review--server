@@ -1,5 +1,6 @@
 const path = require("path");
 const express = require("express");
+const logger = require("../logger");
 // const xss = require('xss')
 const ReviewsService = require("./reviews-service");
 
@@ -38,10 +39,11 @@ reviewsRouter.route("/").post(jsonBodyParser, (req, res, next) => {
   const { user_id, book_id, rating, review_text } = req.body;
   const newReview = { user_id, book_id, rating, review_text };
 
+
   for (const [key, value] of Object.entries(newReview))
     if (value == null)
       return res.status(400).json({
-        error: `Missing '${key}' in request body`
+        error: {message: `Missing ${key} in request body`}
       });
 
   //put this in once auth is wired up, then delete user_id from newReview above
@@ -51,11 +53,13 @@ reviewsRouter.route("/").post(jsonBodyParser, (req, res, next) => {
   .then(review => {
       res
       .status(201)
-      .location(path.posix.join(req.originalUrl, `/${review.id}`))
+      .location(path.posix.join(req.originalUrl + `/${review.id}`))
       .json(ReviewsService.serializeReview(review))
+      logger.info(`Review with for book id ${book_id} created by user_id ${user_id}.`);
 
   })
   .catch(next)
+  
 
 });
 

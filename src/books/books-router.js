@@ -18,6 +18,7 @@ booksRouter
   .route("/:book_id")
   .all(checkBookExists)
   .get((req, res) => {
+    console.log('book exists, prep to serialize BOOK');
     res.json(BooksService.serializeBook(res.book));
   })
   .delete((req, res, next) => {
@@ -126,10 +127,13 @@ async function checkBookExists(req, res, next) {
       req.params.book_id
     );
 
+
     if (!book)
       return res.status(404).json({
         error: { message: `Book does not exist` }
       });
+
+
 
     res.book = book;
     next();

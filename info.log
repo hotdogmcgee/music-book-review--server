@@ -90,3 +90,6 @@
 {"message":"instrument is required.","level":"error"}
 {"message":"year_published is required.","level":"error"}
 {"message":"user_id is required.","level":"error"}
+{"message":"Book with title Title 1 created by user_id 2.","level":"info"}
+{"message":"Review with for book id 2 created by user_id 1.","level":"info"}
+{"message":"Review with for book id 2 created by user_id 2.","level":"info"}

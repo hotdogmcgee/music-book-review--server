@@ -154,7 +154,6 @@ describe("Reviews Endpoints", () => {
           // helpers.makeExpectedReview(testUsers, review)
           helpers.makeExpectedReview(review)
         })
-        expectedReviews.length && console.log(expectedReviews);
 
         const oneLessReview = expectedReviews.filter(review => review.id !== idToRemove)
 

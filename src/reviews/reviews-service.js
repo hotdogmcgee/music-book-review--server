@@ -23,7 +23,6 @@ const ReviewsService = {
   },
 
   insertReview(db, newReview) {
-    console.log('newReview: ', newReview);
 
       return db
         .insert(newReview)

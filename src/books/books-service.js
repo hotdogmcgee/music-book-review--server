@@ -78,10 +78,12 @@ const BooksService = {
         "rv.user_id",
         "rv.review_text",
         "rv.rating",
-        "rv.date_created"
+        "rv.date_created",
+        ...userFields,
       )
+      .leftJoin("users AS usr", "rv.user_id", "usr.id")
       .where("rv.book_id", book_id)
-      .groupBy("rv.id", "rv.user_id");
+      // .groupBy("rv.id", "rv.user_id");
   },
 
   //do I need to delete comments from here?
@@ -125,13 +127,18 @@ const BooksService = {
 
   //add in full user fields
   serializeBookReview(rv) {
+
+    const reviewTree = new Treeize()
+
+    const reviewData = reviewTree.grow([rv]).getData()[0]
     return {
-      id: rv.id,
-      user_id: rv.user_id,
-      book_id: rv.book_id,
-      rating: rv.rating,
-      review_text: rv.review_text,
-      date_created: rv.date_created
+      id: reviewData.id,
+      user_id: reviewData.user_id,
+      user: reviewData.user || {},
+      book_id: reviewData.book_id,
+      rating: reviewData.rating,
+      review_text: reviewData.review_text,
+      date_created: reviewData.date_created
     };
   }
 };

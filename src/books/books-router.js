@@ -9,7 +9,7 @@ const jsonBodyParser = express.json();
 booksRouter.route("/").get((req, res, next) => {
   BooksService.getAllBooks(req.app.get("db"))
     .then(books => {
-      res.json(BooksService.serializeBooks(books));
+      res.json(BooksService.serializeBooks(books, req));
     })
     .catch(next);
 });
@@ -77,7 +77,18 @@ booksRouter
       .catch(next);
   });
 
-  //change user_id to req.user_id
+booksRouter
+  .route("/:book_id/authors")
+  .all(checkBookExists)
+  .get((req, res, next) => {
+    BooksService.getAuthorsForBook(req.app.get("db"), req.params.book_id)
+      .then(authors => {
+        res.json(authors.map(BooksService.serializeAuthor));
+      })
+      .catch(next);
+  });
+
+//change user_id to req.user_id
 booksRouter.route("/").post(jsonBodyParser, (req, res, next) => {
   const {
     title,
@@ -85,6 +96,7 @@ booksRouter.route("/").post(jsonBodyParser, (req, res, next) => {
     instrument,
     isbn,
     year_published,
+
     user_id
     // author
   } = req.body;
@@ -126,13 +138,10 @@ async function checkBookExists(req, res, next) {
       req.params.book_id
     );
 
-
     if (!book)
       return res.status(404).json({
         error: { message: `Book does not exist` }
       });
-
-
 
     res.book = book;
     next();

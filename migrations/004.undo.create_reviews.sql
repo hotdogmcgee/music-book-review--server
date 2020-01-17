@@ -1,1 +1,4 @@
+ALTER TABLE books
+  DROP COLUMN IF EXISTS avg_rating;
+  
 DROP TABLE IF EXISTS reviews;

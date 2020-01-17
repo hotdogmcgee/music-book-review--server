@@ -1,9 +1,27 @@
 const xss = require("xss");
 const Treeize = require("treeize");
 
+//put reviews in res obj or separate?
+//figure out data later
 const BooksService = {
   getAllBooks(db) {
     return (
+      // db.raw('a.first_name, a.last_name, b.id FROM books b LEFT JOIN books_authors ba ON b.id = ba.book_id LEFT JOIN authors a ON ba.author_id = a.id;'),
+      // db.raw(`
+      // SELECT b.id, b.title, b.information, b.isbn, b.instrument, b.year_published, b.date_created,
+      // STRING_AGG ( distinct a.first_name || ' ' || a.last_name, ',') author_names,
+      // AVG(rv.rating) avg_rating,
+      // count(distinct rv) as num_reviews
+      // FROM books b
+      // LEFT JOIN books_authors ba
+      // ON b.id = ba.book_id
+      // LEFT JOIN authors a
+      // ON ba.author_id = a.id
+      // LEFT JOIN reviews rv
+      // ON b.id = rv.book_id
+      // GROUP BY b.id;
+
+      // `)
       db
         .from("books AS bk")
         .select(
@@ -14,39 +32,19 @@ const BooksService = {
           "bk.instrument",
           "bk.year_published",
           "bk.date_created",
-          // 'authors.first_name',
-          // 'authors.last_name',
           ...userFields,
-          // db.raw(
-          //   `json_strip_nulls(
-          //     row_to_json(
-          //       (SELECT tmp FROM (
-          //         SELECT
-          //           usr.id,
-          //           usr.user_name,
-          //           usr.email,
-          //           usr.full_name,
-          //           usr.date_created,
-          //           usr.date_modified
-          //       ) tmp)
-          //     )
-          //   ) AS "user"`
-          // )
+          db.raw("count(DISTINCT rv) AS num_reviews"),
+          db.raw(`AVG(rv.rating) avg_rating`),
+          db.raw(
+            `STRING_AGG ( distinct a.first_name || ' ' || a.last_name, ',') author_names`
+          )
+          
         )
-        // .leftJoin(
-        //     'authors AS auth',
-        //     'bk.author_id',
-        //     'auth.id'
-
-        // )
-        // .leftJoin("books_authors", "bk.id", '=', "books_authors.book_id")
-        // .leftJoin('authors', 'authors.id', '=', 'books_authors.author_id')
-        // .leftJoin(
-        //     'reviews AS rv',
-        //     'rv.book_id',
-        //     'bk.id'
-        // )
+        .leftJoin("books_authors AS ba", "bk.id", "ba.book_id")
+        .leftJoin("authors AS a", "ba.author_id", "a.id")
+        .leftJoin("reviews AS rv", "bk.id", "rv.book_id")
         .leftJoin("users AS usr", "bk.user_id", "usr.id")
+        .groupBy("bk.id", "usr.id")
     );
   },
 
@@ -79,11 +77,21 @@ const BooksService = {
         "rv.review_text",
         "rv.rating",
         "rv.date_created",
-        ...userFields,
+        ...userFields
       )
       .leftJoin("users AS usr", "rv.user_id", "usr.id")
-      .where("rv.book_id", book_id)
-      // .groupBy("rv.id", "rv.user_id");
+      .where("rv.book_id", book_id);
+    // .groupBy("rv.id", "rv.user_id");
+  },
+
+  //why can't I grab a.id?
+  getAuthorsForBook(db, book_id) {
+    return db
+      .from("books AS bk")
+      .select("bk.id", "ba.author_id", "a.first_name", "a.last_name")
+      .leftJoin("books_authors AS ba", "bk.id", "ba.book_id")
+      .leftJoin("authors AS a", "ba.author_id", "a.id")
+      .where("ba.book_id", book_id);
   },
 
   //do I need to delete comments from here?
@@ -102,13 +110,25 @@ const BooksService = {
   },
 
   serializeBooks(books) {
+
     return books.map(this.serializeBook);
   },
 
   serializeBook(book) {
     const bookTree = new Treeize();
-
     const bookData = bookTree.grow([book]).getData()[0];
+
+    authorsArr = book.author_names.split(',')
+
+    const finalAuthors = authorsArr.map(author => {
+      const arr = author.split(' ')
+      return {
+        first_name: arr[0],
+        last_name: arr[1]
+      }
+    })
+    
+
 
     return {
       id: bookData.id,
@@ -118,19 +138,19 @@ const BooksService = {
       isbn: xss(bookData.isbn),
       year_published: bookData.year_published,
       date_created: bookData.date_created,
+      num_reviews: Number(bookData.num_reviews) || 0,
+      avg_rating: Number(bookData.avg_rating) || null,
       user: bookData.user || {},
       user_id: bookData.user.id,
-      //   authors: bookData.authors || [],
-      name: bookData.books_authors
+        authors: finalAuthors || [],
     };
   },
 
   //add in full user fields
   serializeBookReview(rv) {
+    const reviewTree = new Treeize();
 
-    const reviewTree = new Treeize()
-
-    const reviewData = reviewTree.grow([rv]).getData()[0]
+    const reviewData = reviewTree.grow([rv]).getData()[0];
     return {
       id: reviewData.id,
       user_id: reviewData.user_id,
@@ -139,6 +159,14 @@ const BooksService = {
       rating: reviewData.rating,
       review_text: reviewData.review_text,
       date_created: reviewData.date_created
+    };
+  },
+
+  serializeAuthor(author) {
+    return {
+      book_id: author.id,
+      first_name: author.first_name,
+      last_name: author.last_name
     };
   }
 };

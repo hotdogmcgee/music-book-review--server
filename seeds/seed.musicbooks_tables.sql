@@ -35,9 +35,9 @@ VALUES
 (1, 2, 'i did not like this', 2),
 (2, 1, 'how do you play this instrument????', 1),
 (2, 1, 'oh wait i see', 5),
-(3, 2, 'i love the piano so much, thank you Bastian!', 5),
-(4, 2, 'wow the clarinet is for losers!', 2),
-(4, 1, 'ugh reeds are the worst', 2);
+(4, 2, 'i love the piano so much, thank you Bastian!', 5),
+(5, 2, 'wow the clarinet is for losers!', 2),
+(5, 1, 'ugh reeds are the worst', 2);
 
 INSERT INTO books_authors (book_id, author_id)
 VALUES

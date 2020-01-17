@@ -32,7 +32,7 @@ booksRouter
   .patch(jsonBodyParser, (req, res, next) => {
     const {
       title,
-      information,
+      description,
       instrument,
       isbn,
       year_published
@@ -41,7 +41,7 @@ booksRouter
     } = req.body;
     const bookToUpdate = {
       title,
-      information,
+      description,
       instrument,
       isbn,
       year_published
@@ -53,7 +53,7 @@ booksRouter
     if (numberOfValues === 0) {
       return res.status(400).json({
         error: {
-          message: `Request body must contain either 'title', 'information', 'isbn', 'year published', or 'instrument'`
+          message: `Request body must contain either 'title', 'description', 'isbn', 'year published', or 'instrument'`
         }
       });
     }
@@ -92,7 +92,7 @@ booksRouter
 booksRouter.route("/").post(jsonBodyParser, (req, res, next) => {
   const {
     title,
-    information,
+    description,
     instrument,
     isbn,
     year_published,
@@ -102,7 +102,7 @@ booksRouter.route("/").post(jsonBodyParser, (req, res, next) => {
   } = req.body;
   const newBook = {
     title,
-    information,
+    description,
     instrument,
     isbn,
     year_published,

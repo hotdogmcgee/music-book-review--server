@@ -21,7 +21,7 @@ VALUES
 ('Clarinet', 'King'),
 ('Johnny', 'Guitar');
 
-INSERT INTO books (title, isbn, information, instrument, year_published, user_id)
+INSERT INTO books (title, isbn, description, instrument, year_published, user_id)
 VALUES
 ('FJH 1', 'isbn1', 'for guitar beginners, a great resource!', 'guitar', 2000, 1),
 ('The Art of Violin', 'isbn2', 'literally every violin player has used this for 10,000 years', 'violin', 882, 1),

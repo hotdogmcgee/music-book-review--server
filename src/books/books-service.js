@@ -8,7 +8,7 @@ const BooksService = {
     return (
       // db.raw('a.first_name, a.last_name, b.id FROM books b LEFT JOIN books_authors ba ON b.id = ba.book_id LEFT JOIN authors a ON ba.author_id = a.id;'),
       // db.raw(`
-      // SELECT b.id, b.title, b.information, b.isbn, b.instrument, b.year_published, b.date_created,
+      // SELECT b.id, b.title, b.description, b.isbn, b.instrument, b.year_published, b.date_created,
       // STRING_AGG ( distinct a.first_name || ' ' || a.last_name, ',') author_names,
       // AVG(rv.rating) avg_rating,
       // count(distinct rv) as num_reviews
@@ -27,7 +27,7 @@ const BooksService = {
         .select(
           "bk.id",
           "bk.title",
-          "bk.information",
+          "bk.description",
           "bk.isbn",
           "bk.instrument",
           "bk.year_published",
@@ -133,7 +133,7 @@ const BooksService = {
     return {
       id: bookData.id,
       title: xss(bookData.title),
-      information: xss(bookData.information),
+      description: xss(bookData.description),
       instrument: xss(bookData.instrument),
       isbn: xss(bookData.isbn),
       year_published: bookData.year_published,

@@ -64,7 +64,7 @@ describe("Books Endpoints", function() {
           .expect(200)
           .expect(res => {
             expect(res.body[0].title).to.eql(expectedBook.title);
-            expect(res.body[0].information).to.eql(expectedBook.information);
+            expect(res.body[0].description).to.eql(expectedBook.description);
           });
       });
     });
@@ -116,7 +116,7 @@ describe("Books Endpoints", function() {
 
       const testUser = testUsers[0];
       const newBook = {
-        information: "look at this info!",
+        description: "look at this info!",
         title: "post test book",
         instrument: "viola",
         isbn: "test isbn",
@@ -133,7 +133,7 @@ describe("Books Endpoints", function() {
         .expect(res => {
           expect(res.body).to.have.property("id");
           expect(res.body.user_id).to.eql(testUser.id);
-          expect(res.body.information).to.eql(newBook.information);
+          expect(res.body.description).to.eql(newBook.description);
           expect(res.body.title).to.eql(newBook.title);
           expect(res.body.instrument).to.eql(newBook.instrument);
           expect(res.body.isbn).to.eql(newBook.isbn);
@@ -148,7 +148,7 @@ describe("Books Endpoints", function() {
             .then(row => {
               expect(row.user_id).to.eql(testUser.id);
               expect(row.title).to.eql(newBook.title);
-              expect(row.information).to.eql(newBook.information);
+              expect(row.description).to.eql(newBook.description);
               expect(row.instrument).to.eql(newBook.instrument);
               expect(row.isbn).to.eql(newBook.isbn);
               expect(row.year_published).to.eql(newBook.year_published);
@@ -163,7 +163,7 @@ describe("Books Endpoints", function() {
 
     const requiredFields = [
       "title",
-      "information",
+      "description",
       "isbn",
       "instrument",
       "year_published",
@@ -173,7 +173,7 @@ describe("Books Endpoints", function() {
     requiredFields.forEach(field => {
       const testUser = testUsers[0];
       const newBook = {
-        information: "look at this info!",
+        description: "look at this info!",
         title: "post test book",
         instrument: "viola",
         isbn: "test isbn",
@@ -239,7 +239,7 @@ describe("Books Endpoints", function() {
         const idToUpdate = 2;
         const updateBook = {
           title: "updated title",
-          information: "updated info",
+          description: "updated info",
           isbn: "new isbn"
         };
         const bookData = {
@@ -267,7 +267,7 @@ describe("Books Endpoints", function() {
           .send({ irrelevantField: "should not work" })
           .expect(400, {
             error: {
-              message: `Request body must contain either 'title', 'information', 'isbn', 'year published', or 'instrument'`
+              message: `Request body must contain either 'title', 'description', 'isbn', 'year published', or 'instrument'`
             }
           });
       });

@@ -6,22 +6,6 @@ const Treeize = require("treeize");
 const BooksService = {
   getAllBooks(db) {
     return (
-      // db.raw('a.first_name, a.last_name, b.id FROM books b LEFT JOIN books_authors ba ON b.id = ba.book_id LEFT JOIN authors a ON ba.author_id = a.id;'),
-      // db.raw(`
-      // SELECT b.id, b.title, b.description, b.isbn, b.instrument, b.year_published, b.date_created,
-      // STRING_AGG ( distinct a.first_name || ' ' || a.last_name, ',') author_names,
-      // AVG(rv.rating) avg_rating,
-      // count(distinct rv) as num_reviews
-      // FROM books b
-      // LEFT JOIN books_authors ba
-      // ON b.id = ba.book_id
-      // LEFT JOIN authors a
-      // ON ba.author_id = a.id
-      // LEFT JOIN reviews rv
-      // ON b.id = rv.book_id
-      // GROUP BY b.id;
-
-      // `)
       db
         .from("books AS bk")
         .select(
@@ -66,7 +50,6 @@ const BooksService = {
     // })
   },
 
-  //add full user info
   getReviewsForBook(db, book_id) {
     return db
       .from("reviews AS rv")
@@ -146,7 +129,6 @@ const BooksService = {
     };
   },
 
-  //add in full user fields
   serializeBookReview(rv) {
     const reviewTree = new Treeize();
 
@@ -180,21 +162,5 @@ const userFields = [
   "usr.date_modified AS user:date_modified"
 ];
 
-// function makeAuthorsArr(authors) {
-//     let obj = {}
-//     authors.map(author => {
-//         return {
-//             id: author.id,
-//             first_name: author.first_name,
-//             last_name: author.last_name
-//         }
-//     })
-
-//     const finalArr = authors
-//     console.log(finalArr);
-
-//     return finalArr
-// }
-//   const authorsArr = makeAuthorsArr()
 
 module.exports = BooksService;

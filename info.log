@@ -105,3 +105,7 @@
 {"message":"Review with for book id 4 created by user_id 1.","level":"info"}
 {"message":"Review with for book id 4 created by user_id 1.","level":"info"}
 {"message":"Review with for book id 4 created by user_id 1.","level":"info"}
+{"message":"title is required.","level":"error"}
+{"message":"Review with for book id 1 created by user_id 1.","level":"info"}
+{"message":"Review with for book id 1 created by user_id 1.","level":"info"}
+{"message":"Review with for book id 4 created by user_id 1.","level":"info"}

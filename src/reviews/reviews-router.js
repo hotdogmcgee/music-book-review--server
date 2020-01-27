@@ -35,6 +35,10 @@ reviewsRouter.route("/").get((req, res, next) => {
     .catch(next);
 });
 
+<<<<<<< HEAD
+=======
+//PUT AUTH IN post()
+>>>>>>> de0acbdeb74b5223222231101d7936fd638b6a9f
 reviewsRouter.route("/").post(requireAuth, jsonBodyParser, (req, res, next) => {
   const { book_id, rating, review_text } = req.body;
   const newReview = { book_id, rating, review_text };

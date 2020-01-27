@@ -3,6 +3,7 @@ const express = require("express");
 const logger = require("../logger");
 // const xss = require('xss')
 const ReviewsService = require("./reviews-service");
+const { requireAuth} = require('../middleware/jwt-auth')
 
 const reviewsRouter = express.Router();
 const jsonBodyParser = express.json();
@@ -35,9 +36,9 @@ reviewsRouter.route("/").get((req, res, next) => {
 });
 
 //PUT AUTH IN post()
-reviewsRouter.route("/").post(jsonBodyParser, (req, res, next) => {
-  const { user_id, book_id, rating, review_text } = req.body;
-  const newReview = { user_id, book_id, rating, review_text };
+reviewsRouter.route("/").post(requireAuth, jsonBodyParser, (req, res, next) => {
+  const { book_id, rating, review_text } = req.body;
+  const newReview = { book_id, rating, review_text };
 
 
   for (const [key, value] of Object.entries(newReview))
@@ -46,8 +47,7 @@ reviewsRouter.route("/").post(jsonBodyParser, (req, res, next) => {
         error: {message: `Missing ${key} in request body`}
       });
 
-  //put this in once auth is wired up, then delete user_id from newReview above
-  // newReview.user_id = req.user_id
+  newReview.user_id = req.user.id
 
   ReviewsService.insertReview(req.app.get('db'), newReview)
   .then(review => {
@@ -55,7 +55,7 @@ reviewsRouter.route("/").post(jsonBodyParser, (req, res, next) => {
       .status(201)
       .location(path.posix.join(req.originalUrl + `/${review.id}`))
       .json(ReviewsService.serializeReview(review))
-      logger.info(`Review with for book id ${book_id} created by user_id ${user_id}.`);
+      logger.info(`Review with for book id ${book_id} created by user_id ${req.user.id}.`);
 
   })
   .catch(next)

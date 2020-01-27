@@ -10,8 +10,8 @@ TRUNCATE
 
 INSERT INTO users (user_name, full_name, email, password)
 VALUES 
-('Kevin', 'Kevin Robinson', 'kevinrobinsondeveloper@gmail.com', 'default'),
-('Bob', 'Bob Roberts', 'bobob@bob.com', 'bob');
+('Kevin', 'Kevin Robinson', 'kevinrobinsondeveloper@gmail.com', '$2a$10$Zc2RxFqDBmoyFErolaublelh3HVqlBP3EvaL3Z5ODJXTjR2v7hIka'),
+('Bob', 'Bob Roberts', 'bobob@bob.com', '$2a$16$XAO0WtM75rZUblvQ99U2x.QpLiIZnQkCs4Tu.GgwPaf/xyELqzuz2');
 
 INSERT INTO authors (first_name, last_name) 
 VALUES

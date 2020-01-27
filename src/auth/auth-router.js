@@ -1,3 +1,4 @@
+
 const express = require("express");
 const AuthService = require("./auth-service");
 
@@ -35,7 +36,7 @@ authRouter.post("/login", jsonBodyParser, (req, res, next) => {
         const sub = dbUser.user_name
         const payload = { user_id: dbUser.id }
         res.send({
-            payload,
+          payload,
             authToken: AuthService.createJwt(sub, payload),
         })
       });

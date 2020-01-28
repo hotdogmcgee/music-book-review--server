@@ -57,7 +57,8 @@ const ReviewsService = {
     console.log(reviewData);
       return {
         id: reviewData.id,
-        user_id: reviewData.user_id,
+        // user_id: reviewData.user_id,
+        user: reviewData.user || {},
         book_id: reviewData.book_id,
         rating: reviewData.rating,
         review_text: xss(reviewData.review_text),
@@ -65,5 +66,14 @@ const ReviewsService = {
       }
   }
 };
+
+const userFields = [
+  "usr.id AS user:id",
+  "usr.user_name AS user:user_name",
+  "usr.full_name AS user:full_name",
+  "usr.email AS user:email",
+  "usr.date_created AS user:date_created",
+  "usr.date_modified AS user:date_modified"
+];
 
 module.exports = ReviewsService

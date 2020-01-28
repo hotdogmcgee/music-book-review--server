@@ -48,7 +48,7 @@ function makeBooksArray(users) {
     {
       id: 1,
       title: "FJH 1",
-      desription: "for guitar beginners, a great resource!",
+      description: "for guitar beginners, a great resource!",
       instrument: "guitar",
       isbn: "isbn1",
       year_published: 2000,
@@ -59,7 +59,7 @@ function makeBooksArray(users) {
     {
       id: 2,
       title: "The Art of Violin",
-      desription:
+      description:
         "literally every violin player has used this for 10,000 years",
       isbn: "isbn2",
       instrument: "violin",
@@ -71,7 +71,7 @@ function makeBooksArray(users) {
     {
       id: 3,
       title: "guitar book",
-      desription: "who cares about this description",
+      description: "who cares about this description",
       isbn: "isbn3",
       instrument: "guitar",
       year_published: 1990,
@@ -82,7 +82,7 @@ function makeBooksArray(users) {
     {
       id: 4,
       title: "Music for Millions",
-      desription: "a great piano book for beginners",
+      description: "a great piano book for beginners",
       isbn: "isbn4",
       instrument: "piano",
       year_published: 1950,
@@ -147,7 +147,7 @@ function makeExpectedBook(users, book) {
     // user_id: book.user_id,
     user_id: user.id,
     title: book.title,
-    desription: book.desription,
+    description: book.description,
     instrument: book.instrument,
     isbn: book.isbn,
     year_published: book.year_published,
@@ -194,7 +194,7 @@ function makeMaliciousBook(user) {
     id: 911,
     date_created: new Date().toISOString(),
     title: 'Naughty naughty very naughty <script>alert("xss");</script>',
-    desription: `Bad image <img src="https://url.to.file.which/does-not.exist" onerror="alert(document.cookie);">. But not <strong>all</strong> bad.`,
+    description: `Bad image <img src="https://url.to.file.which/does-not.exist" onerror="alert(document.cookie);">. But not <strong>all</strong> bad.`,
     instrument: "viola",
     isbn: "isbnisbn",
     year_published: 2000,
@@ -204,7 +204,7 @@ function makeMaliciousBook(user) {
     ...makeExpectedBook([user], maliciousBook),
     title:
       'Naughty naughty very naughty &lt;script&gt;alert("xss");&lt;/script&gt;',
-    desription: `Bad image <img src="https://url.to.file.which/does-not.exist">. But not <strong>all</strong> bad.`
+    description: `Bad image <img src="https://url.to.file.which/does-not.exist">. But not <strong>all</strong> bad.`
   };
   return {
     maliciousBook,

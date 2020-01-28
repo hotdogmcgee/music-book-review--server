@@ -3,6 +3,7 @@ const express = require("express");
 const logger = require("../logger");
 // const xss = require('xss')
 const ReviewsService = require("./reviews-service");
+const {requireAuth} = require('../middleware/jwt-auth')
 
 const reviewsRouter = express.Router();
 const jsonBodyParser = express.json();

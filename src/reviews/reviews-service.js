@@ -15,8 +15,8 @@ const ReviewsService = {
         "rv.date_created",
         ...userFields
       )
-      .leftJoin("users AS usr", "bk.user_id", "usr.id")
-      .groupBy("bk.id", "usr.id")
+      .leftJoin("users AS usr", "rv.user_id", "usr.id")
+      .groupBy("rv.id", "usr.id")
   },
 
   getById(db, id) {
@@ -50,9 +50,11 @@ const ReviewsService = {
   //get rid of treeize if not using user data
   serializeReview(rv) {
 
+
     const reviewTree = new Treeize()
 
     const reviewData = reviewTree.grow([rv]).getData()[0]
+    console.log(reviewData);
       return {
         id: reviewData.id,
         user: reviewData.user || {},

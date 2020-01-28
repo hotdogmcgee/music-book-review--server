@@ -155,3 +155,4 @@
 {"message":"instrument is required.","level":"error"}
 {"message":"year_published is required.","level":"error"}
 {"message":"user_id is required.","level":"error"}
+{"message":"Review with for book id 4 created by user_id 1.","level":"info"}

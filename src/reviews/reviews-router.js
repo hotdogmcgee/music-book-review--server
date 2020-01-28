@@ -3,7 +3,6 @@ const express = require("express");
 const logger = require("../logger");
 // const xss = require('xss')
 const ReviewsService = require("./reviews-service");
-const { requireAuth} = require('../middleware/jwt-auth')
 
 const reviewsRouter = express.Router();
 const jsonBodyParser = express.json();
@@ -45,6 +44,7 @@ reviewsRouter.route("/").post(requireAuth, jsonBodyParser, (req, res, next) => {
       return res.status(400).json({
         error: {message: `Missing ${key} in request body`}
       });
+
 
   newReview.user_id = req.user.id
 

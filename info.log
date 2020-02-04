@@ -160,3 +160,13 @@
 {"message":"Review with for book id 4 created by user_id 1.","level":"info"}
 {"message":"Review with for book id 4 created by user_id 1.","level":"info"}
 {"message":"Review with for book id 4 created by user_id 1.","level":"info"}
+{"message":"Book with title post test book created by user_id 1.","level":"info"}
+{"message":"Book with title post test book created by user_id 1.","level":"info"}
+{"message":"Book with title post test book created by user_id 1.","level":"info"}
+{"message":"Book with title post test book created by user_id 1.","level":"info"}
+{"message":"title is required.","level":"error"}
+{"message":"description is required.","level":"error"}
+{"message":"isbn is required.","level":"error"}
+{"message":"instrument is required.","level":"error"}
+{"message":"year_published is required.","level":"error"}
+{"message":"user_id is required.","level":"error"}

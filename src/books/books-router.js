@@ -9,7 +9,7 @@ const jsonBodyParser = express.json();
 booksRouter.route("/").get((req, res, next) => {
   BooksService.getAllBooks(req.app.get("db"))
     .then(books => {
-      res.json(BooksService.serializeBooks(books, req));
+      res.json(BooksService.serializeBooks(books));
     })
     .catch(next);
 });
@@ -65,7 +65,6 @@ booksRouter
       .catch(next);
   });
 
-//need book reviews route
 booksRouter
   .route("/:book_id/reviews")
   .all(checkBookExists)

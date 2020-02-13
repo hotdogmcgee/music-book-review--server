@@ -12,8 +12,8 @@ reviewsRouter.route("/").get((req, res, next) => {
   const { user_id, sort } = req.query;
 
   if (sort) {
-    if (!["rating", "book_id"].includes(sort)) {
-      return res.status(400).send("Sort must be rating or book_id");
+    if (!["rating", "book_id", "date_created"].includes(sort)) {
+      return res.status(400).send("Sort must be rating, date_created, or book_id");
     }
   }
 

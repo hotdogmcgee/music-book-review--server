@@ -1,5 +1,5 @@
 const xss = require("xss");
-const Treeize = require('treeize')
+const Treeize = require("treeize");
 
 const ReviewsService = {
   getAllReviews(db) {
@@ -16,54 +16,47 @@ const ReviewsService = {
         ...userFields
       )
       .leftJoin("users AS usr", "rv.user_id", "usr.id")
-      .groupBy("rv.id", "usr.id")
+      .groupBy("rv.id", "usr.id");
   },
 
   getById(db, id) {
     return ReviewsService.getAllReviews(db)
-    .where('rv.id', id)
-    .first()
+      .where("rv.id", id)
+      .first();
   },
 
   insertReview(db, newReview) {
-
-      return db
-        .insert(newReview)
-        .into('reviews')
-        .returning('*')
-        .then(([rv]) => rv)
-        .then(rv => 
-            ReviewsService.getById(db, rv.id))
+    return db
+      .insert(newReview)
+      .into("reviews")
+      .returning("*")
+      .then(([rv]) => rv)
+      .then(rv => ReviewsService.getById(db, rv.id));
   },
 
   deleteReview(knex, id) {
     return knex
-    .from('reviews')
-    .where({ id })
-    .delete()
+      .from("reviews")
+      .where({ id })
+      .delete();
   },
 
   serializeReviews(rvs) {
-      return rvs.map(this.serializeReview)
+    return rvs.map(this.serializeReview);
   },
 
-  //get rid of treeize if not using user data
   serializeReview(rv) {
+    const reviewTree = new Treeize();
 
-
-    const reviewTree = new Treeize()
-
-    const reviewData = reviewTree.grow([rv]).getData()[0]
-    console.log(reviewData);
-      return {
-        id: reviewData.id,
-        // user_id: reviewData.user_id,
-        user: reviewData.user || {},
-        book_id: reviewData.book_id,
-        rating: reviewData.rating,
-        review_text: xss(reviewData.review_text),
-        date_created: reviewData.date_created
-      }
+    const reviewData = reviewTree.grow([rv]).getData()[0];
+    return {
+      id: reviewData.id,
+      user: reviewData.user || {},
+      book_id: reviewData.book_id,
+      rating: reviewData.rating,
+      review_text: xss(reviewData.review_text),
+      date_created: reviewData.date_created
+    };
   }
 };
 
@@ -76,4 +69,4 @@ const userFields = [
   "usr.date_modified AS user:date_modified"
 ];
 
-module.exports = ReviewsService
+module.exports = ReviewsService;

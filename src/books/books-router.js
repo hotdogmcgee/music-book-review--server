@@ -25,8 +25,7 @@ booksRouter
         res.status(204).end();
       })
       .catch(next);
-  })
-
+  });
 
 booksRouter
   .route("/:book_id/reviews")
@@ -50,9 +49,7 @@ booksRouter
       .catch(next);
   });
 
-
 //POST route to be added in later
-
 
 async function checkBookExists(req, res, next) {
   try {

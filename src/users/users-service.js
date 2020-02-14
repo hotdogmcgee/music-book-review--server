@@ -54,7 +54,7 @@ const UsersService = {
   validateEmail(email) {
     if (email.length < 4) {
       return "Email be longer than 4 characters";
-    } 
+    }
   },
 
   hashPassword(password) {
@@ -62,7 +62,7 @@ const UsersService = {
   },
 
   serializeUsers(users) {
-    return users.map(this.serializeUser)
+    return users.map(this.serializeUser);
   },
 
   serializeUser(user) {

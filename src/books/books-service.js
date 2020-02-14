@@ -1,35 +1,30 @@
 const xss = require("xss");
 const Treeize = require("treeize");
 
-//put reviews in res obj or separate?
-//figure out data later
 const BooksService = {
   getAllBooks(db) {
-    return (
-      db
-        .from("books AS bk")
-        .select(
-          "bk.id",
-          "bk.title",
-          "bk.description",
-          "bk.isbn",
-          "bk.instrument",
-          "bk.year_published",
-          "bk.date_created",
-          ...userFields,
-          db.raw("count(DISTINCT rv) AS num_reviews"),
-          db.raw(`AVG(rv.rating) avg_rating`),
-          db.raw(
-            `STRING_AGG ( distinct a.first_name || ' ' || a.last_name, ',') author_names`
-          )
-          
+    return db
+      .from("books AS bk")
+      .select(
+        "bk.id",
+        "bk.title",
+        "bk.description",
+        "bk.isbn",
+        "bk.instrument",
+        "bk.year_published",
+        "bk.date_created",
+        ...userFields,
+        db.raw("count(DISTINCT rv) AS num_reviews"),
+        db.raw(`AVG(rv.rating) avg_rating`),
+        db.raw(
+          `STRING_AGG ( distinct a.first_name || ' ' || a.last_name, ',') author_names`
         )
-        .leftJoin("books_authors AS ba", "bk.id", "ba.book_id")
-        .leftJoin("authors AS a", "ba.author_id", "a.id")
-        .leftJoin("reviews AS rv", "bk.id", "rv.book_id")
-        .leftJoin("users AS usr", "bk.user_id", "usr.id")
-        .groupBy("bk.id", "usr.id")
-    );
+      )
+      .leftJoin("books_authors AS ba", "bk.id", "ba.book_id")
+      .leftJoin("authors AS a", "ba.author_id", "a.id")
+      .leftJoin("reviews AS rv", "bk.id", "rv.book_id")
+      .leftJoin("users AS usr", "bk.user_id", "usr.id")
+      .groupBy("bk.id", "usr.id");
   },
 
   getById(db, id) {
@@ -45,9 +40,6 @@ const BooksService = {
       .returning("*")
       .then(([bk]) => bk)
       .then(bk => BooksService.getById(db, bk.id));
-    // .then(rows => {
-    //   return rows[0]
-    // })
   },
 
   getReviewsForBook(db, book_id) {
@@ -64,10 +56,8 @@ const BooksService = {
       )
       .leftJoin("users AS usr", "rv.user_id", "usr.id")
       .where("rv.book_id", book_id);
-    // .groupBy("rv.id", "rv.user_id");
   },
 
-  //why can't I grab a.id?
   getAuthorsForBook(db, book_id) {
     return db
       .from("books AS bk")
@@ -77,7 +67,6 @@ const BooksService = {
       .where("ba.book_id", book_id);
   },
 
-  //do I need to delete comments from here?
   deleteBook(knex, id) {
     return knex
       .from("books")
@@ -93,7 +82,6 @@ const BooksService = {
   },
 
   serializeBooks(books) {
-
     return books.map(this.serializeBook);
   },
 
@@ -101,17 +89,15 @@ const BooksService = {
     const bookTree = new Treeize();
     const bookData = bookTree.grow([book]).getData()[0];
 
-    authorsArr = book.author_names.split(',')
+    authorsArr = book.author_names.split(",");
 
     const finalAuthors = authorsArr.map(author => {
-      const arr = author.split(' ')
+      const arr = author.split(" ");
       return {
         first_name: arr[0],
         last_name: arr[1]
-      }
-    })
-    
-
+      };
+    });
 
     return {
       id: bookData.id,
@@ -125,7 +111,7 @@ const BooksService = {
       avg_rating: Number(bookData.avg_rating) || null,
       user: bookData.user || {},
       user_id: bookData.user.id,
-        authors: finalAuthors || [],
+      authors: finalAuthors || []
     };
   },
 
@@ -161,6 +147,5 @@ const userFields = [
   "usr.date_created AS user:date_created",
   "usr.date_modified AS user:date_modified"
 ];
-
 
 module.exports = BooksService;

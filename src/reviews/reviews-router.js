@@ -1,9 +1,8 @@
 const path = require("path");
 const express = require("express");
 const logger = require("../logger");
-// const xss = require('xss')
 const ReviewsService = require("./reviews-service");
-const {requireAuth} = require('../middleware/jwt-auth')
+const { requireAuth } = require("../middleware/jwt-auth");
 
 const reviewsRouter = express.Router();
 const jsonBodyParser = express.json();
@@ -13,7 +12,9 @@ reviewsRouter.route("/").get((req, res, next) => {
 
   if (sort) {
     if (!["rating", "book_id", "date_created"].includes(sort)) {
-      return res.status(400).send("Sort must be rating, date_created, or book_id");
+      return res
+        .status(400)
+        .send("Sort must be rating, date_created, or book_id");
     }
   }
 
@@ -39,63 +40,58 @@ reviewsRouter.route("/").post(requireAuth, jsonBodyParser, (req, res, next) => {
   const { book_id, rating, review_text } = req.body;
   const newReview = { book_id, rating, review_text };
 
-
   for (const [key, value] of Object.entries(newReview))
     if (value == null)
       return res.status(400).json({
-        error: {message: `Missing ${key} in request body`}
+        error: { message: `Missing ${key} in request body` }
       });
 
+  newReview.user_id = req.user.id;
 
-  newReview.user_id = req.user.id
-
-  ReviewsService.insertReview(req.app.get('db'), newReview)
-  .then(review => {
+  ReviewsService.insertReview(req.app.get("db"), newReview)
+    .then(review => {
       res
-      .status(201)
-      .location(path.posix.join(req.originalUrl + `/${review.id}`))
-      .json(ReviewsService.serializeReview(review))
-      logger.info(`Review with for book id ${book_id} created by user_id ${req.user.id}.`);
-
-  })
-  .catch(next)
-  
-
+        .status(201)
+        .location(path.posix.join(req.originalUrl + `/${review.id}`))
+        .json(ReviewsService.serializeReview(review));
+      logger.info(
+        `Review with for book id ${book_id} created by user_id ${req.user.id}.`
+      );
+    })
+    .catch(next);
 });
 
-//put auth in
 reviewsRouter
-    .route('/:review_id')
-    .all(checkReviewExists)
-    .get((req, res) => {
-        res.json(ReviewsService.serializeReview(res.review))
-    })
-    .delete((req, res, next) => {
-        ReviewsService.deleteReview(req.app.get('db'), req.params.review_id)
-        .then(() => {
-            res.status(200).json(`Review with id ${req.params.review_id} deleted.`)
-        })
-        .catch(next)
-    })
-
+  .route("/:review_id")
+  .all(checkReviewExists)
+  .get((req, res) => {
+    res.json(ReviewsService.serializeReview(res.review));
+  })
+  .delete((req, res, next) => {
+    ReviewsService.deleteReview(req.app.get("db"), req.params.review_id)
+      .then(() => {
+        res.status(200).json(`Review with id ${req.params.review_id} deleted.`);
+      })
+      .catch(next);
+  });
 
 async function checkReviewExists(req, res, next) {
-    try {
-      const review = await ReviewsService.getById(
-        req.app.get("db"),
-        req.params.review_id
-      );
-  
-      if (!review)
-        return res.status(404).json({
-          error: { message: `Review does not exist` }
-        });
-  
-      res.review = review;
-      next();
-    } catch (error) {
-      next(error);
-    }
+  try {
+    const review = await ReviewsService.getById(
+      req.app.get("db"),
+      req.params.review_id
+    );
+
+    if (!review)
+      return res.status(404).json({
+        error: { message: `Review does not exist` }
+      });
+
+    res.review = review;
+    next();
+  } catch (error) {
+    next(error);
   }
+}
 
 module.exports = reviewsRouter;

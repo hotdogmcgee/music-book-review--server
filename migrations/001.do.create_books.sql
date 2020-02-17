@@ -3,6 +3,7 @@ CREATE TABLE books (
     title TEXT NOT NULL,
     isbn TEXT,
     description TEXT,
+    publisher TEXT,
     instrument TEXT NOT NULL,
     year_published INTEGER,
     date_created TIMESTAMP DEFAULT now() NOT NULL

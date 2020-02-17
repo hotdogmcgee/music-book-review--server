@@ -83,6 +83,7 @@ const BooksService = {
   },
 
   serializeBooks(books) {
+
     return books.map(this.serializeBook);
   },
 
@@ -90,7 +91,7 @@ const BooksService = {
     const bookTree = new Treeize();
     const bookData = bookTree.grow([book]).getData()[0];
 
-    authorsArr = book.author_names.split(",");
+    authorsArr = book.author_names ? book.author_names.split(",") : [];
 
     const finalAuthors = authorsArr.map(author => {
       const arr = author.split(" ");
@@ -100,6 +101,28 @@ const BooksService = {
       };
     });
 
+    const sortFunc = function(property) {
+      var sortOrder = 1;
+  
+      if(property[0] === "-") {
+          sortOrder = -1;
+          property = property.substr(1);
+      }
+  
+      return function (a,b) {
+          if(sortOrder == -1){
+              return b[property].localeCompare(a[property]);
+          }else{
+              return a[property].localeCompare(b[property]);
+          }        
+      }
+  }
+
+    if (finalAuthors.length > 1) {
+       finalAuthors.sort(sortFunc('last_name'))
+    }
+
+
     return {
       id: bookData.id,
       title: xss(bookData.title),
@@ -107,7 +130,7 @@ const BooksService = {
       instrument: xss(bookData.instrument),
       isbn: xss(bookData.isbn),
       year_published: bookData.year_published,
-      publisher: bookData.publisher,
+      publisher: bookData.publisher || null,
       date_created: bookData.date_created,
       num_reviews: Number(bookData.num_reviews) || 0,
       avg_rating: Number(bookData.avg_rating) || null,

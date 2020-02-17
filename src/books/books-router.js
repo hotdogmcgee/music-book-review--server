@@ -1,9 +1,10 @@
 const express = require("express");
 const BooksService = require("./books-service");
-// const logger = require("../logger");
-// const path = require("path");
+const logger = require("../logger");
+const path = require("path");
 
 const booksRouter = express.Router();
+const jsonBodyParser = express.json()
 
 booksRouter.route("/").get((req, res, next) => {
   BooksService.getAllBooks(req.app.get("db"))
@@ -25,7 +26,38 @@ booksRouter
         res.status(204).end();
       })
       .catch(next);
-  });
+  })
+  .patch(jsonBodyParser, (req, res, next) => {
+    const {
+      title,
+      description,
+      instrument,
+      isbn,
+      year_published
+    } = req.body;
+    const bookToUpdate = {
+      title,
+      description,
+      instrument,
+      isbn,
+      year_published
+    };
+
+    const numberOfValues = Object.values(bookToUpdate).filter(Boolean).length;
+    if (numberOfValues === 0) {
+      return res.status(400).json({
+        error: {
+          message: "Request body must contain either 'title', 'description', 'isbn', 'year_published', or 'instrument'"
+        }
+      });
+    }
+
+    BooksService.updateBook(req.app.get("db"), req.params.book_id, bookToUpdate)
+      .then(numRowsAffected => {
+        res.status(204).end();
+      })
+      .catch(next);
+  });;
 
 booksRouter
   .route("/:book_id/reviews")

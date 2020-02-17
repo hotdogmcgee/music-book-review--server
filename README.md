@@ -46,6 +46,7 @@ To run front-end or back-end tests, simply run `npm test` in the terminal.
     description: String,
     instrument: String,
     year_published: Number,
+    publisher: String,
     date_created: Date
     user_id: Number
 }
@@ -178,6 +179,7 @@ To run front-end or back-end tests, simply run `npm test` in the terminal.
     instrument: String,
     isbn: String,
     year_published: Number,
+    publisher: String,
     date_created: Date,
     num_reviews: Number,
     avg_rating: Number,
@@ -209,6 +211,7 @@ To run front-end or back-end tests, simply run `npm test` in the terminal.
     instrument: String,
     isbn: String,
     year_published: Number,
+    publisher: String,
     date_created: Date,
     num_reviews: Number,
     avg_rating: Number,

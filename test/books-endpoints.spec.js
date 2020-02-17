@@ -2,12 +2,10 @@ const knex = require("knex");
 const app = require("../src/app");
 const helpers = require("./test-helpers");
 
-//why is my date_modified not being passed correctly when creating books?
-
-describe.only("Books Endpoints", function() {
+describe("Books Endpoints", function() {
   let db;
 
-  const { testUsers, testBooks } = helpers.makeBooksFixtures();
+  const { testUsers, testBooks, testAuthors, testReviews, testBooksAuthors } = helpers.makeBooksFixtures();
 
   before("make knex instance", () => {
     db = knex({
@@ -23,7 +21,7 @@ describe.only("Books Endpoints", function() {
 
   afterEach("cleanup", () => helpers.cleanTables(db));
 
-  describe.only("GET /api/books", () => {
+  describe("GET /api/books", () => {
     context("Given no books in db", () => {
       it("responds with 200 and an empty list", () => {
         return supertest(app)
@@ -34,13 +32,13 @@ describe.only("Books Endpoints", function() {
 
     context("Given books DO exist in db", () => {
       beforeEach("insert books", () =>
-        helpers.seedBooksTables(db, testUsers, testBooks)
+        helpers.seedBooksTables(db, testUsers, testBooks, testAuthors, testReviews, testBooksAuthors)
       );
 
       //error with user.date_modified and bk.year_published
       it("responds with 200 and all the books", () => {
         const expectedBooks = testBooks.map(book =>
-          helpers.makeExpectedBook(testUsers, book)
+          helpers.makeExpectedBook(book, testUsers, testAuthors, testReviews, testBooksAuthors)
         );
 
         return supertest(app)
@@ -49,13 +47,15 @@ describe.only("Books Endpoints", function() {
       });
     });
 
+    
     context("Given an XSS attack book", () => {
       const testUser = helpers.makeUsersArray()[1];
       const { maliciousBook, expectedBook } = helpers.makeMaliciousBook(
         testUser
       );
       beforeEach("insert malicious book", () => {
-        return helpers.seedMaliciousBook(db, testUser, maliciousBook);
+        return helpers.seedMaliciousBook(db, testUser, maliciousBook)
+
       });
 
       it("removes XSS attack content", () => {
@@ -93,105 +93,15 @@ describe.only("Books Endpoints", function() {
       it("responds with 200 and the specified book", () => {
         const bookId = 1;
         const expectedBook = helpers.makeExpectedBook(
-          testUsers,
-          testBooks[bookId - 1]
+          testBooks[bookId - 1],
+          testUsers
+
         );
 
         //add auth
         return supertest(app)
           .get(`/api/books/${bookId}`)
           .expect(200, expectedBook);
-      });
-    });
-  });
-
-  describe("POST /api/books", () => {
-    beforeEach("insert books", () => {
-      helpers.seedBooksTables(db, testUsers, testBooks);
-    });
-
-    //causing unhandled rejection error, duplicate pkey.  hmmmmmm
-    it.skip("creates a book, responding with 201 and the new book", function() {
-      this.retries(3);
-
-      const testUser = testUsers[0];
-      const newBook = {
-        description: "look at this info!",
-        title: "post test book",
-        instrument: "viola",
-        isbn: "test isbn",
-        year_published: 1990,
-        user_id: testUser.id,
-        id: 900
-      };
-
-      //make auth
-      return supertest(app)
-        .post("/api/books")
-        .send(newBook)
-        .expect(201)
-        .expect(res => {
-          expect(res.body).to.have.property("id");
-          expect(res.body.user_id).to.eql(testUser.id);
-          expect(res.body.description).to.eql(newBook.description);
-          expect(res.body.title).to.eql(newBook.title);
-          expect(res.body.instrument).to.eql(newBook.instrument);
-          expect(res.body.isbn).to.eql(newBook.isbn);
-          expect(res.body.year_published).to.eql(newBook.year_published);
-        })
-        .expect(res =>
-          db
-            .from("books")
-            .select("*")
-            .where({ id: res.body.id })
-            .first()
-            .then(row => {
-              expect(row.user_id).to.eql(testUser.id);
-              expect(row.title).to.eql(newBook.title);
-              expect(row.description).to.eql(newBook.description);
-              expect(row.instrument).to.eql(newBook.instrument);
-              expect(row.isbn).to.eql(newBook.isbn);
-              expect(row.year_published).to.eql(newBook.year_published);
-              const expectedDate = new Date().toLocaleString("en", {
-                timeZone: "UTC"
-              });
-              const actualDate = new Date(row.date_created).toLocaleString();
-              expect(actualDate).to.eql(expectedDate);
-            })
-        );
-    });
-
-    const requiredFields = [
-      "title",
-      "description",
-      "isbn",
-      "instrument",
-      "year_published",
-      "user_id"
-    ];
-
-    requiredFields.forEach(field => {
-      const testUser = testUsers[0];
-      const newBook = {
-        description: "look at this info!",
-        title: "post test book",
-        instrument: "viola",
-        isbn: "test isbn",
-        year_published: 1990,
-        user_id: testUser.id,
-        id: 900
-      };
-
-      it(`responds with 400 and an error message when the ${field} is missing`, () => {
-        delete newBook[field];
-
-        //add auth
-        return supertest(app)
-          .post("/api/books")
-          .send(newBook)
-          .expect(400, {
-            error: { message: `Missing ${field} in request body` }
-          });
       });
     });
   });
@@ -205,7 +115,7 @@ describe.only("Books Endpoints", function() {
       it("responds with 204 and removes the book", () => {
         const idToRemove = 2;
         const expectedBooks = testBooks.map(book =>
-          helpers.makeExpectedBook(testUsers, book)
+          helpers.makeExpectedBook(book, testUsers)
         );
         const oneLessBook = expectedBooks.filter(book => book.id !== idToRemove);
         return supertest(app)
@@ -232,7 +142,7 @@ describe.only("Books Endpoints", function() {
   describe(`PATCH /api/books/:book_id`, () => {
     context("given books DO exist in db", () => {
       beforeEach("insert books", () =>
-        helpers.seedBooksTables(db, testUsers, testBooks)
+      helpers.seedBooksTables(db, testUsers, testBooks, testAuthors, testReviews, testBooksAuthors)
       );
 
       it("responds with 204 and updates the book", () => {
@@ -247,7 +157,7 @@ describe.only("Books Endpoints", function() {
           ...updateBook
         };
 
-        const expectedBook = helpers.makeExpectedBook(testUsers, bookData);
+        const expectedBook = helpers.makeExpectedBook(bookData, testUsers, testAuthors, testReviews, testBooksAuthors);
 
         return supertest(app)
           .patch(`/api/books/${idToUpdate}`)
@@ -267,7 +177,7 @@ describe.only("Books Endpoints", function() {
           .send({ irrelevantField: "should not work" })
           .expect(400, {
             error: {
-              message: `Request body must contain either 'title', 'description', 'isbn', 'year published', or 'instrument'`
+              message: "Request body must contain either 'title', 'description', 'isbn', 'year_published', or 'instrument'"
             }
           });
       });
@@ -283,7 +193,7 @@ describe.only("Books Endpoints", function() {
           ...updateBook
         };
 
-        const expectedBook = helpers.makeExpectedBook(testUsers, bookData);
+        const expectedBook = helpers.makeExpectedBook(bookData, testUsers, testAuthors, testReviews, testBooksAuthors);
 
         return supertest(app)
           .patch(`/api/books/${idToUpdate}`)

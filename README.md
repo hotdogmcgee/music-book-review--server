@@ -101,6 +101,10 @@ To run front-end or back-end tests, simply run `npm test` in the terminal.
 │       ├── /:book_id
 │       ├── /:book_id/reviews
 │       └── /:book_id/authors
+│   └── PATCH
+│       └── /:book_id/
+│   └── DELETE
+│       └── /:book_id/
 ├── /reviews
 │   └── GET
 │       ├── /
@@ -196,7 +200,7 @@ To run front-end or back-end tests, simply run `npm test` in the terminal.
 ];
 ```
 
-### GET `/api/books/book_id`
+### GET `/api/books/:book_id`
 
 ```js
 
@@ -270,6 +274,43 @@ To run front-end or back-end tests, simply run `npm test` in the terminal.
     last_name: String
   }
 ];
+```
+
+### PATCH `/api/books/:book_id`
+
+```js
+
+//req.params
+{
+    book_id: book_id
+}
+
+//req.body
+{
+  title: String,
+  description: String,
+  isbn: String,
+  year_published: String
+}
+//res.status
+  {
+    204
+  }
+```
+
+### DELETE `/api/books/:book_id`
+
+```js
+
+//req.params
+{
+    book_id: book_id
+}
+
+//res.status
+  {
+    204
+  }
 ```
 
 ### GET `/api/reviews`

@@ -249,8 +249,28 @@ function makeExpectedBook(book, users, authors, reviews, booksAuthors) {
   };
 }
 
-// function makeExpectedReview(users, review) {
-//   const book = books.find(book => book.id === review.book_id)
+function makeExpectedReview(review, users) {
+
+  const user = users.find(user => user.id === review.user_id);
+
+  return {
+    id: review.id,
+    book_id: review.book_id,
+    user: {
+      id: user.id,
+      user_name: user.user_name,
+      email: user.email,
+      full_name: user.full_name,
+      date_created: user.date_created
+    },
+    review_text: review.review_text,
+    rating: review.rating,
+    date_created: review.date_created
+  }
+}
+
+// function makeExpectedReview(review) {
+//   // const user = users.find(user => user.id === review.user_id);
 
 //   return {
 //     id: review.id,
@@ -259,21 +279,8 @@ function makeExpectedBook(book, users, authors, reviews, booksAuthors) {
 //     review_text: review.review_text,
 //     rating: review.rating,
 //     date_created: review.date_created
-//   }
+//   };
 // }
-
-function makeExpectedReview(review) {
-  // const user = users.find(user => user.id === review.user_id);
-
-  return {
-    id: review.id,
-    book_id: review.book_id,
-    user_id: review.user_id,
-    review_text: review.review_text,
-    rating: review.rating,
-    date_created: review.date_created
-  };
-}
 
 function makeMaliciousBook(user) {
   const maliciousBook = {
@@ -374,19 +381,21 @@ function seedMaliciousBook(db, user, book) {
     .then(() => db.into("books").insert([book]));
 }
 
-function seedMaliciousReview(db, user, book, review) {
+function seedMaliciousReview(db, users, book, review) {
   return db
     .into("users")
-    .insert([user])
+    .insert(users)
     .then(() => db.into("books").insert([book]))
     .then(() => db.into("reviews").insert([review]));
 }
 
 function makeAuthHeader(user, secret = process.env.JWT_SECRET) {
-  const token = jwt.sign({ user_id: user.id }, secret, {
+  console.log(user);
+  const token = jwt.sign({ user_id: user.id, date_created: user.date_created }, secret, {
     subject: user.user_name,
     algorithm: "HS256"
   });
+  console.log(token);
 
   return `Bearer ${token}`;
 }

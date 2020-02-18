@@ -34,6 +34,7 @@ authRouter.post("/login", jsonBodyParser, (req, res, next) => {
         const sub = dbUser.user_name;
 
         const payload = {
+
           user_id: dbUser.id,
           date_created: dbUser.date_created
         };

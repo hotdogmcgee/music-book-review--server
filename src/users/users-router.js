@@ -14,7 +14,7 @@ usersRouter.route("/").get((req, res, next) => {
     }
   }
   UsersService.getAllUsers(req.app.get("db"))
-    .then(users => {
+    .then((users) => {
       if (sort) {
         users.sort((a, b) => {
           return a[sort] > b[sort] ? 1 : a[sort] < b[sort] ? -1 : 0;
@@ -30,7 +30,7 @@ usersRouter.post("/", jsonBodyParser, (req, res, next) => {
   for (const field of ["full_name", "user_name", "email", "password"])
     if (!req.body[field])
       return res.status(400).json({
-        error: `Missing '${field}' in request body`
+        error: `Missing '${field}' in request body`,
       });
 
   const passwordError = UsersService.validatePassword(password);
@@ -42,28 +42,28 @@ usersRouter.post("/", jsonBodyParser, (req, res, next) => {
   if (emailError) return res.status(400).json({ error: emailError });
 
   UsersService.hasUserWithEmail(req.app.get("db"), email).then(
-    hasUserWithEmail => {
+    (hasUserWithEmail) => {
       if (hasUserWithEmail)
         return res.status(400).json({ error: `Email already in use` });
     }
   );
 
   UsersService.hasUserWithUserName(req.app.get("db"), user_name, next)
-    .then(hasUserWithUserName => {
+    .then((hasUserWithUserName) => {
       if (hasUserWithUserName)
         return res.status(400).json({ error: `Username already taken` });
 
-      return UsersService.hashPassword(password).then(hashedPassword => {
+      return UsersService.hashPassword(password).then((hashedPassword) => {
         const newUser = {
           user_name,
           password: hashedPassword,
           email,
           full_name,
-          date_created: "now()"
+          date_created: "now()",
         };
 
         return UsersService.insertUser(req.app.get("db"), newUser).then(
-          user => {
+          (user) => {
             res
               .status(201)
               .location(path.posix.join(req.originalUrl + `/${user.id}`))

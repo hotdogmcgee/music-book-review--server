@@ -14,14 +14,14 @@ function requireAuth(req, res, next) {
     const payload = AuthService.verifyJwt(bearerToken);
 
     AuthService.getUserWithUserName(req.app.get("db"), payload.sub)
-      .then(user => {
+      .then((user) => {
         if (!user)
           return res.status(401).json({ error: "Unauthorized request" });
 
         req.user = user;
         next();
       })
-      .catch(err => {
+      .catch((err) => {
         console.error(err);
         next(err);
       });
@@ -31,5 +31,5 @@ function requireAuth(req, res, next) {
 }
 
 module.exports = {
-  requireAuth
+  requireAuth,
 };

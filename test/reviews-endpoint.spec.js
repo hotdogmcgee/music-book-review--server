@@ -27,7 +27,7 @@ describe("Reviews Endpoints", () => {
 
   afterEach("cleanup", () => helpers.cleanTables(db));
 
-  describe.only("GET /api/reviews", () => {
+  describe("GET /api/reviews", () => {
     context("Given no reviews in db", () => {
       it("responds with 200 and an empty list", () => {
         return supertest(app)

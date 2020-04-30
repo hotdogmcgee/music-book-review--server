@@ -29,9 +29,7 @@ const BooksService = {
   },
 
   getById(db, id) {
-    return BooksService.getAllBooks(db)
-      .where("bk.id", id)
-      .first();
+    return BooksService.getAllBooks(db).where("bk.id", id).first();
   },
 
   insertBook(db, newBook) {
@@ -40,7 +38,7 @@ const BooksService = {
       .into("books")
       .returning("*")
       .then(([bk]) => bk)
-      .then(bk => BooksService.getById(db, bk.id));
+      .then((bk) => BooksService.getById(db, bk.id));
   },
 
   getReviewsForBook(db, book_id) {
@@ -69,21 +67,14 @@ const BooksService = {
   },
 
   deleteBook(knex, id) {
-    return knex
-      .from("books")
-      .where({ id })
-      .delete();
+    return knex.from("books").where({ id }).delete();
   },
 
   updateBook(knex, id, newBookFields) {
-    return knex
-      .from("books")
-      .where({ id })
-      .update(newBookFields);
+    return knex.from("books").where({ id }).update(newBookFields);
   },
 
   serializeBooks(books) {
-
     return books.map(this.serializeBook);
   },
 
@@ -93,35 +84,34 @@ const BooksService = {
 
     authorsArr = book.author_names ? book.author_names.split(",") : [];
 
-    const finalAuthors = authorsArr.map(author => {
+    const finalAuthors = authorsArr.map((author) => {
       const arr = author.split(" ");
       return {
         first_name: arr[0],
-        last_name: arr[1]
+        last_name: arr[1],
       };
     });
 
-    const sortFunc = function(property) {
+    const sortFunc = function (property) {
       var sortOrder = 1;
-  
-      if(property[0] === "-") {
-          sortOrder = -1;
-          property = property.substr(1);
+
+      if (property[0] === "-") {
+        sortOrder = -1;
+        property = property.substr(1);
       }
-  
-      return function (a,b) {
-          if(sortOrder == -1){
-              return b[property].localeCompare(a[property]);
-          }else{
-              return a[property].localeCompare(b[property]);
-          }        
-      }
-  }
+
+      return function (a, b) {
+        if (sortOrder == -1) {
+          return b[property].localeCompare(a[property]);
+        } else {
+          return a[property].localeCompare(b[property]);
+        }
+      };
+    };
 
     if (finalAuthors.length > 1) {
-       finalAuthors.sort(sortFunc('last_name'))
+      finalAuthors.sort(sortFunc("last_name"));
     }
-
 
     return {
       id: bookData.id,
@@ -136,7 +126,7 @@ const BooksService = {
       avg_rating: Number(bookData.avg_rating) || null,
       user: bookData.user || {},
       user_id: bookData.user.id,
-      authors: finalAuthors || []
+      authors: finalAuthors || [],
     };
   },
 
@@ -151,7 +141,7 @@ const BooksService = {
       book_id: reviewData.book_id,
       rating: reviewData.rating,
       review_text: reviewData.review_text,
-      date_created: reviewData.date_created
+      date_created: reviewData.date_created,
     };
   },
 
@@ -159,9 +149,9 @@ const BooksService = {
     return {
       book_id: author.id,
       first_name: author.first_name,
-      last_name: author.last_name
+      last_name: author.last_name,
     };
-  }
+  },
 };
 
 const userFields = [
@@ -170,7 +160,7 @@ const userFields = [
   "usr.full_name AS user:full_name",
   "usr.email AS user:email",
   "usr.date_created AS user:date_created",
-  "usr.date_modified AS user:date_modified"
+  "usr.date_modified AS user:date_modified",
 ];
 
 module.exports = BooksService;

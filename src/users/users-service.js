@@ -20,13 +20,13 @@ const UsersService = {
     return db("users")
       .where({ user_name })
       .first()
-      .then(user => !!user);
+      .then((user) => !!user);
   },
   hasUserWithEmail(db, email) {
     return db("users")
       .where({ email })
       .first()
-      .then(user => !!user);
+      .then((user) => !!user);
   },
   insertUser(db, newUser) {
     return db
@@ -71,9 +71,9 @@ const UsersService = {
       full_name: xss(user.full_name),
       user_name: xss(user.user_name),
       email: xss(user.email),
-      date_created: new Date(user.date_created)
+      date_created: new Date(user.date_created),
     };
-  }
+  },
 };
 
 module.exports = UsersService;

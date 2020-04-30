@@ -20,9 +20,7 @@ const ReviewsService = {
   },
 
   getById(db, id) {
-    return ReviewsService.getAllReviews(db)
-      .where("rv.id", id)
-      .first();
+    return ReviewsService.getAllReviews(db).where("rv.id", id).first();
   },
 
   insertReview(db, newReview) {
@@ -31,14 +29,11 @@ const ReviewsService = {
       .into("reviews")
       .returning("*")
       .then(([rv]) => rv)
-      .then(rv => ReviewsService.getById(db, rv.id));
+      .then((rv) => ReviewsService.getById(db, rv.id));
   },
 
   deleteReview(knex, id) {
-    return knex
-      .from("reviews")
-      .where({ id })
-      .delete();
+    return knex.from("reviews").where({ id }).delete();
   },
 
   serializeReviews(rvs) {
@@ -55,9 +50,9 @@ const ReviewsService = {
       book_id: reviewData.book_id,
       rating: reviewData.rating,
       review_text: xss(reviewData.review_text),
-      date_created: reviewData.date_created
+      date_created: reviewData.date_created,
     };
-  }
+  },
 };
 
 const userFields = [
@@ -66,7 +61,7 @@ const userFields = [
   "usr.full_name AS user:full_name",
   "usr.email AS user:email",
   "usr.date_created AS user:date_created",
-  "usr.date_modified AS user:date_modified"
+  "usr.date_modified AS user:date_modified",
 ];
 
 module.exports = ReviewsService;

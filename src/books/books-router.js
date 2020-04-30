@@ -1,7 +1,5 @@
 const express = require("express");
 const BooksService = require("./books-service");
-const logger = require("../logger");
-const path = require("path");
 
 const booksRouter = express.Router();
 const jsonBodyParser = express.json()

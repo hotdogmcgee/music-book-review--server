@@ -30,16 +30,16 @@
     "morgan": "^1.9.1",
     "path": "^0.12.7",
     "pg": "^7.14.0",
+    "postgrator-cli": "^4.0.0",
     "treeize": "^2.1.2",
     "winston": "^3.2.1",
     "xss": "^1.0.6"
   },
   "devDependencies": {
     "chai": "^4.2.0",
+    "lodash": ">=4.17.12",
     "mocha": "^6.1.4",
     "nodemon": "^1.19.1",
-    "postgrator-cli": "^3.3.0",
-    "supertest": "^4.0.2",
-    "lodash": ">=4.17.12"
+    "supertest": "^4.0.2"
   }
 }

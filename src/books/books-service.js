@@ -57,14 +57,14 @@ const BooksService = {
       .where("rv.book_id", book_id);
   },
 
-  getAuthorsForBook(db, book_id) {
-    return db
-      .from("books AS bk")
-      .select("bk.id", "ba.author_id", "a.first_name", "a.last_name")
-      .leftJoin("books_authors AS ba", "bk.id", "ba.book_id")
-      .leftJoin("authors AS a", "ba.author_id", "a.id")
-      .where("ba.book_id", book_id);
-  },
+  // getAuthorsForBook(db, book_id) {
+  //   return db
+  //     .from("books AS bk")
+  //     .select("bk.id", "ba.author_id", "a.first_name", "a.last_name")
+  //     .leftJoin("books_authors AS ba", "bk.id", "ba.book_id")
+  //     .leftJoin("authors AS a", "ba.author_id", "a.id")
+  //     .where("ba.book_id", book_id);
+  // },
 
   deleteBook(knex, id) {
     return knex.from("books").where({ id }).delete();

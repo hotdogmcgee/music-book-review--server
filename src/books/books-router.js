@@ -55,7 +55,7 @@ booksRouter
         res.status(204).end();
       })
       .catch(next);
-  });;
+  });
 
 booksRouter
   .route("/:book_id/reviews")

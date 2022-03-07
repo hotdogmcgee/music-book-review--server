@@ -8,7 +8,7 @@ https://music-book-review.herokuapp.com/
 
 ## Live Link to Client
 
-https://music-book-review-app.now.sh/
+https://music-book-review-client.vercel.app/
 
 ## Installing
 
@@ -22,6 +22,11 @@ npm install
 ## Running the tests
 
 To run front-end or back-end tests, simply run `npm test` in the terminal.
+
+## Seed the Database
+
+### Deployment
+`heroku pg:psql -f ./seeds/seed.musicbooks_tables.sql `
 
 ## Schema
 

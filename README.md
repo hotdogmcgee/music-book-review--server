@@ -12,7 +12,7 @@ https://music-book-review-client.vercel.app/
 
 ## Installing
 
-Test-Tonewood-API requires Node.js v6.0+ to run.
+This requires Node.js v6.0+ to run.
 Install the dependencies and devDependencies and start the server.
 
 ```
